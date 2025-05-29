@@ -1,26 +1,248 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f7f9fc;
+  --foreground: #1a202c;
+  --card: #ffffff;
+  --card-foreground: #1a202c;
+  --primary: #2f49d0;
+  --primary-foreground: #ffffff;
+  --secondary: #edf2f7;
+  --secondary-foreground: #2d3748;
+  --muted: #e2e8f0;
+  --muted-foreground: #718096;
+  --accent: #edf2f7;
+  --accent-foreground: #2d3748;
+  --destructive: #e53e3e;
+  --destructive-foreground: #ffffff;
+  --border: #d1d5db;
+  --input: #f7fafc;
+  --ring: #2f49d0;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --font-nunito: var(--font-nunito);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+.dark {
+  --background: #1e1e1e;
+  --foreground: #676767;
+  --card: #171717;
+  --card-foreground: #fafafa;
+  --primary: #2f49d0;
+  --primary-foreground: #ffffff;
+  --secondary: #353535;
+  --secondary-foreground: #fafafa;
+  --muted: #2d2d2d;
+  --muted-foreground: #a1a0a0;
+  --accent: #353535;
+  --accent-foreground: #fafafa;
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+  --border: #2e2e2e;
+  --input: #353535;
+  --ring: #2f49d0;
+}
+
+* {
+  border-color: var(--border);
 }
 
 body {
+  font-family: var(--font-nunito), 'Nunito', sans-serif;
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Custom dark theme colors matching the design */
+.bg-sidebar-card-top {
+  background-color: #353535;
+}
+
+.sidebar-separator-top {
+  border-bottom: 1px solid #2e2e2e;
+}
+
+.sidebar-separator-bottom {
+  border-top: 1px solid #2e2e2e;
+}
+
+.text-premium-yellow {
+  color: #f7b91c;
+}
+
+.icon-background {
+  background: #2d2d2d;
+}
+
+.tooltip-head {
+  background: #1d1d1d;
+}
+
+.tooltip-body {
+  background: #252525;
+}
+
+.search-icon {
+  top: 50%;
+  transform: translate(0, -50%);
+}
+
+.card-stack-border {
+  border-bottom: 2px solid #696969;
+}
+
+.bg-details {
+  background-color: #1e1e1e;
+}
+
+.add-component-head {
+  background-color: #181818;
+  background-image: url("https://www.transparenttextures.com/patterns/carbon-fibre.png");
+}
+
+.sidebar-item-selected {
+  color: white;
+  border-right: 2px solid white;
+}
+
+.sidebar-item {
+  border-right: 2px solid transparent;
+}
+
+.sidebar-item:hover {
+  color: #a1a0a0;
+}
+
+/* Custom scrollbar for dark theme */
+.dark ::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: #2d2d2d;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #4a4a4a;
+  border-radius: 3px;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #5a5a5a;
+}
+
+/* Light mode improvements */
+.light {
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+
+.light .bg-card,
+.light [class*="bg-card"] {
+  background: linear-gradient(145deg, #ffffff, #f8fafc);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* Less rounded corners */
+.rounded-xl {
+  border-radius: 0.5rem !important; /* 8px instead of 12px */
+}
+
+.rounded-lg {
+  border-radius: 0.375rem !important; /* 6px instead of 8px */
+}
+
+.rounded-md {
+  border-radius: 0.25rem !important; /* 4px instead of 6px */
+}
+
+/* Enhanced card shadows */
+.card-shadow {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.card-shadow-hover {
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* Glass effect for cards */
+.glass-card {
+  background: rgba(23, 23, 23, 0.8);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.light .glass-card {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* Gradient text effect */
+.gradient-text {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Premium accent colors */
+.accent-blue {
+  color: #2f49d0;
+}
+
+.accent-yellow {
+  color: #f7b91c;
+}
+
+.accent-purple {
+  color: #8e76ef;
+}
+
+/* Animation utilities */
+.animate-slide-up {
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }

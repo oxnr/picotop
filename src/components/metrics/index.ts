@@ -1,0 +1,1 @@
+export { ActionSignalComponent } from './action-signal'

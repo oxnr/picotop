@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui'
 import { DashboardMetric } from '@/lib/types'
-import { TrendingUp, TrendingDown, Minus } from '@phosphor-icons/react'
+import { TrendUp, TrendDown, Minus } from '@phosphor-icons/react'
 
 interface MetricCardProps {
   metric: DashboardMetric
@@ -16,9 +16,9 @@ export function MetricCard({ metric, index = 0 }: MetricCardProps) {
     
     switch (metric.change.direction) {
       case 'up':
-        return <TrendingUp className="h-4 w-4 text-green-500" />
+        return <TrendUp className="h-4 w-4 text-green-500" />
       case 'down':
-        return <TrendingDown className="h-4 w-4 text-red-500" />
+        return <TrendDown className="h-4 w-4 text-red-500" />
       default:
         return <Minus className="h-4 w-4 text-gray-500" />
     }
