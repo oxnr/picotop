@@ -77,7 +77,7 @@ export function SimpleBitcoinChart({ data }: SimpleBitcoinChartProps) {
     if (active && payload && payload.length) {
       return (
         <div className="bg-card border border-border rounded-lg p-3 shadow-lg">
-          <p className="text-white font-medium">{label}</p>
+          <p className="text-foreground font-medium">{label}</p>
           <p className="text-primary">
             Price: <span className="font-bold">${payload[0].value.toLocaleString()}</span>
           </p>

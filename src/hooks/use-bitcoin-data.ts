@@ -10,8 +10,27 @@ interface BitcoinData {
   metrics: BitcoinMetrics
 }
 
+interface BitcoinResponse {
+  success: boolean
+  data: BitcoinData
+  meta?: {
+    apiHealth: {
+      coingecko: boolean
+      coinpaprika: boolean
+      feargreed: boolean
+    }
+    sources: {
+      price: string
+      dominance: string
+      metrics: string
+      fearGreed: number
+    }
+  }
+  timestamp: string
+}
+
 export function useBitcoinData() {
-  return useQuery<BitcoinData>({
+  return useQuery<BitcoinResponse>({
     queryKey: ['bitcoin-data'],
     queryFn: async () => {
       const response = await fetch('/api/bitcoin')
@@ -20,15 +39,17 @@ export function useBitcoinData() {
         throw new Error('Failed to fetch Bitcoin data')
       }
       
-      const result = await response.json()
+      const result: BitcoinResponse = await response.json()
       
       if (!result.success) {
-        throw new Error(result.error || 'Failed to fetch Bitcoin data')
+        throw new Error('Failed to fetch Bitcoin data')
       }
       
-      return result.data
+      return result
     },
-    refetchInterval: 60000, // Refetch every minute
-    staleTime: 30000, // Consider data stale after 30 seconds
+    refetchInterval: 30000, // Faster refetch for real-time data
+    staleTime: 15000, // More aggressive stale time for fresher data
+    retry: 3, // Retry failed requests
+    retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
   })
 }

@@ -140,19 +140,21 @@ function mockBitcoinHistoricalData(days: number): BitcoinHistoricalData[] {
   const now = Date.now()
   const oneMonth = 30 * 24 * 60 * 60 * 1000
   
-  // Updated Bitcoin price history leading to current $108,700
+  // Corrected Bitcoin price history from 2020 to current
   const monthlyPrices = [
-    15500, 16800, 23000, 28000, 27200, 30000, // Jan-Jun 2023
-    29500, 26200, 26900, 34500, 37000, 42500, // Jul-Dec 2023
-    42800, 51500, 71000, 64000, 67500, 61000, // Jan-Jun 2024
-    57200, 63500, 65000, 69000, 91500, 95800, // Jul-Dec 2024
-    99200, 104500, 108700  // Jan-Mar 2025 (updated to current)
+    16540, 9600, 5800, 7770, 8800, 9100, 11200, 11700, 10800, 13780, 19700, 28900, // 2020
+    29000, 45000, 58900, 65000, 35000, 34500, 41000, 47000, 43800, 61000, 69000, 46200, // 2021
+    38000, 38500, 45000, 38000, 29600, 20000, 23300, 23000, 19400, 20400, 15700, 16500, // 2022
+    23100, 24200, 27000, 29200, 27000, 30000, 29200, 29100, 26900, 34500, 37000, 42200, // 2023
+    42800, 51500, 71000, 64000, 67500, 61000, 66500, 59800, 63000, 69000, 91500, 108700 // 2024
   ]
   
-  const points = Math.min(27, monthlyPrices.length) // Show all available data
+  const points = Math.min(days, monthlyPrices.length) // Use available data up to requested days
+  const startIndex = Math.max(0, monthlyPrices.length - points)
   
-  for (let i = 0; i < points; i++) {
-    const timestamp = now - (points - i - 1) * oneMonth
+  for (let i = startIndex; i < monthlyPrices.length; i++) {
+    const monthsBack = monthlyPrices.length - 1 - i
+    const timestamp = now - monthsBack * oneMonth
     const price = monthlyPrices[i]
     const marketCap = price * 19700000 // Approximate circulating supply
     const volume = 20000000000 + Math.random() * 15000000000

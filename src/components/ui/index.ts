@@ -1,3 +1,5 @@
 export { Button, buttonVariants } from "./button"
 export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent } from "./card"
 export { BrrrVideo } from "./brrr-video"
+export { DataStatus } from "./data-status"
+export { PicojeetLogo, PicojeetWordmark } from "./picojeet-logo"

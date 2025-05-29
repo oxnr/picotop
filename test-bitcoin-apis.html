@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bitcoin API Test</title>
+    <style>
+        body {
+            font-family: monospace;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #fff;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #333;
+            border-radius: 5px;
+        }
+        .success { color: #4caf50; }
+        .error { color: #f44336; }
+        .info { color: #2196f3; }
+        pre {
+            background: #2a2a2a;
+            padding: 10px;
+            border-radius: 3px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Bitcoin API Test Results</h1>
+    <div id="results"></div>
+
+    <script type="module">
+        const COINGECKO_API = 'https://api.coingecko.com/api/v3'
+        const COINPAPRIKA_API = 'https://api.coinpaprika.com/v1'
+        const FEAR_GREED_API = 'https://api.alternative.me/fng/'
+
+        const resultsDiv = document.getElementById('results');
+
+        function log(message, type = 'info') {
+            const div = document.createElement('div');
+            div.className = type;
+            div.textContent = message;
+            resultsDiv.appendChild(div);
+        }
+
+        function logJson(data) {
+            const pre = document.createElement('pre');
+            pre.textContent = JSON.stringify(data, null, 2);
+            resultsDiv.appendChild(pre);
+        }
+
+        async function testCoinGeckoPrice() {
+            const section = document.createElement('div');
+            section.className = 'test-section';
+            section.innerHTML = '<h2>Testing CoinGecko Price API</h2>';
+            resultsDiv.appendChild(section);
+
+            try {
+                const url = `${COINGECKO_API}/simple/price?ids=bitcoin&vs_currencies=usd&include_market_cap=true&include_24hr_vol=true&include_24hr_change=true&include_last_updated_at=true`;
+                log(`URL: ${url}`);
+                
+                const response = await fetch(url, {
+                    headers: {
+                        'Accept': 'application/json',
+                    },
+                });
+                
+                log(`Status: ${response.status} ${response.statusText}`, response.ok ? 'success' : 'error');
+                
+                const data = await response.json();
+                log('Response data:');
+                logJson(data);
+                
+                if (data.bitcoin) {
+                    log('Parsed successfully:', 'success');
+                    log(`Price: $${data.bitcoin.usd?.toLocaleString()}`);
+                    log(`24h Change: ${data.bitcoin.usd_24h_change?.toFixed(2)}%`);
+                }
+            } catch (error) {
+                log(`Error: ${error.message}`, 'error');
+                log(`Error type: ${error.name}`, 'error');
+                if (error.stack) {
+                    log(`Stack: ${error.stack}`, 'error');
+                }
+            }
+        }
+
+        async function testCoinGeckoDominance() {
+            const section = document.createElement('div');
+            section.className = 'test-section';
+            section.innerHTML = '<h2>Testing CoinGecko Dominance API</h2>';
+            resultsDiv.appendChild(section);
+
+            try {
+                const url = `${COINGECKO_API}/global`;
+                log(`URL: ${url}`);
+                
+                const response = await fetch(url, {
+                    headers: {
+                        'Accept': 'application/json',
+                    },
+                });
+                
+                log(`Status: ${response.status}`, response.ok ? 'success' : 'error');
+                
+                const data = await response.json();
+                log(`Bitcoin dominance: ${data.data?.market_cap_percentage?.btc?.toFixed(2)}%`);
+            } catch (error) {
+                log(`Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function testCoinpaprikaPrice() {
+            const section = document.createElement('div');
+            section.className = 'test-section';
+            section.innerHTML = '<h2>Testing Coinpaprika Price API</h2>';
+            resultsDiv.appendChild(section);
+
+            try {
+                const url = `${COINPAPRIKA_API}/tickers/btc-bitcoin`;
+                log(`URL: ${url}`);
+                
+                const response = await fetch(url, {
+                    headers: {
+                        'Accept': 'application/json',
+                    },
+                });
+                
+                log(`Status: ${response.status}`, response.ok ? 'success' : 'error');
+                
+                const data = await response.json();
+                if (data.quotes?.USD) {
+                    log('Parsed successfully:', 'success');
+                    log(`Price: $${data.quotes.USD.price?.toLocaleString()}`);
+                    log(`24h Change: ${data.quotes.USD.percent_change_24h?.toFixed(2)}%`);
+                }
+            } catch (error) {
+                log(`Error: ${error.message}`, 'error');
+                log(`CORS Error likely - this API may not allow browser requests`, 'error');
+            }
+        }
+
+        async function testFearGreedAPI() {
+            const section = document.createElement('div');
+            section.className = 'test-section';
+            section.innerHTML = '<h2>Testing Fear & Greed API</h2>';
+            resultsDiv.appendChild(section);
+
+            try {
+                const url = `${FEAR_GREED_API}?limit=1`;
+                log(`URL: ${url}`);
+                
+                const response = await fetch(url, {
+                    headers: {
+                        'Accept': 'application/json',
+                    },
+                });
+                
+                log(`Status: ${response.status}`, response.ok ? 'success' : 'error');
+                
+                const data = await response.json();
+                if (data.data?.[0]) {
+                    log('Parsed successfully:', 'success');
+                    log(`Fear & Greed Index: ${data.data[0].value} (${data.data[0].value_classification})`);
+                }
+            } catch (error) {
+                log(`Error: ${error.message}`, 'error');
+                log(`CORS Error likely - this API may not allow browser requests`, 'error');
+            }
+        }
+
+        async function testWithProxy() {
+            const section = document.createElement('div');
+            section.className = 'test-section';
+            section.innerHTML = '<h2>Testing API calls through a CORS proxy</h2>';
+            resultsDiv.appendChild(section);
+
+            try {
+                // Test with a public CORS proxy
+                const proxyUrl = 'https://corsproxy.io/?';
+                const apiUrl = encodeURIComponent(`${COINPAPRIKA_API}/tickers/btc-bitcoin`);
+                const url = proxyUrl + apiUrl;
+                
+                log(`Testing with CORS proxy: ${url}`);
+                
+                const response = await fetch(url);
+                log(`Proxy Status: ${response.status}`, response.ok ? 'success' : 'error');
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    log('Proxy request successful! This confirms CORS is the issue.', 'success');
+                }
+            } catch (error) {
+                log(`Proxy error: ${error.message}`, 'error');
+            }
+        }
+
+        // Import the actual functions from the app
+        async function testActualFunctions() {
+            const section = document.createElement('div');
+            section.className = 'test-section';
+            section.innerHTML = '<h2>Testing Actual App Functions</h2>';
+            resultsDiv.appendChild(section);
+
+            try {
+                const module = await import('./src/lib/api/enhanced-bitcoin.ts');
+                
+                log('Testing fetchEnhancedBitcoinPrice()...');
+                const price = await module.fetchEnhancedBitcoinPrice();
+                log('Price result:');
+                logJson(price);
+                
+                log('Testing fetchEnhancedBitcoinDominance()...');
+                const dominance = await module.fetchEnhancedBitcoinDominance();
+                log(`Dominance result: ${dominance}%`);
+                
+                log('Testing checkAPIHealth()...');
+                const health = await module.checkAPIHealth();
+                log('API Health:');
+                logJson(health);
+            } catch (error) {
+                log(`Import/Function error: ${error.message}`, 'error');
+            }
+        }
+
+        // Run all tests
+        async function runTests() {
+            log('Starting Bitcoin API tests...', 'info');
+            log(`Browser: ${navigator.userAgent}`, 'info');
+            log(`Date: ${new Date().toISOString()}`, 'info');
+            
+            await testCoinGeckoPrice();
+            await testCoinGeckoDominance();
+            await testCoinpaprikaPrice();
+            await testFearGreedAPI();
+            await testWithProxy();
+            await testActualFunctions();
+            
+            log('Tests complete!', 'success');
+        }
+
+        runTests();
+    </script>
+</body>
+</html>

@@ -56,9 +56,9 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
         <div className="flex-shrink-0 overflow-hidden p-2">
           <div className="flex items-center h-full sm:justify-center xl:justify-start p-2 sidebar-separator-top">
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-orange-500 to-red-500">
-              <CurrencyBtc className="h-6 w-6 text-white" weight="bold" />
+              <CurrencyBtc className="h-6 w-6 text-foreground" weight="bold" />
             </div>
-            <div className="block sm:hidden xl:block ml-2 font-bold text-xl text-white">
+            <div className="block sm:hidden xl:block ml-2 font-bold text-xl text-foreground">
               CycleTop
             </div>
             <div className="flex-grow sm:hidden xl:block" />
@@ -78,7 +78,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
               <CurrencyBtc className="w-5 h-5 text-orange-500" />
             </div>
             <div className="block sm:hidden xl:block ml-3">
-              <div className="text-sm font-bold text-white">CycleTop Pro</div>
+              <div className="text-sm font-bold text-foreground">CycleTop Pro</div>
               <div className="text-sm text-muted-foreground">Premium Analytics</div>
             </div>
             <div className="block sm:hidden xl:block flex-grow" />
@@ -100,7 +100,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                   "w-full mt-3 flex items-center px-3 sm:px-0 xl:px-3 justify-start sm:justify-center xl:justify-start sm:mt-6 xl:mt-3 cursor-pointer py-3 rounded-lg transition-all duration-200",
                   isActive
                     ? "sidebar-item-selected bg-primary/10"
-                    : "sidebar-item text-muted-foreground hover:text-white hover:bg-accent/50"
+                    : "sidebar-item text-muted-foreground hover:text-foreground hover:bg-accent/50"
                 )}
                 onClick={() => onClose()}
               >
@@ -108,8 +108,8 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                   className={cn(
                     "w-5 h-5 flex-shrink-0 transition-colors",
                     isActive
-                      ? "text-white"
-                      : "text-muted-foreground group-hover:text-white"
+                      ? "text-foreground"
+                      : "text-muted-foreground group-hover:text-foreground"
                   )}
                 />
                 <div className="block sm:hidden xl:block ml-3 font-medium">
@@ -125,7 +125,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
         <div className="w-full p-3 h-32 hidden sm:block sm:h-20 xl:h-32 flex-shrink-0">
           <div className="rounded-xl w-full h-full px-3 sm:px-0 xl:px-3 overflow-hidden bg-gradient-to-br from-primary/20 to-purple-600/20 border border-primary/20">
             <div className="block sm:hidden xl:block pt-3">
-              <div className="font-bold text-white text-sm">API Usage</div>
+              <div className="font-bold text-foreground text-sm">API Usage</div>
               <div className="text-muted-foreground text-xs">
                 Updated {new Date().toLocaleTimeString()}
               </div>
@@ -144,7 +144,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
 
             <div className="hidden sm:block xl:hidden p-2">
               <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-purple-600 flex items-center justify-center">
-                <span className="text-white font-bold text-sm">77%</span>
+                <span className="text-foreground font-bold text-sm">77%</span>
               </div>
             </div>
           </div>
@@ -154,14 +154,14 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
         <div className="flex-shrink-0 overflow-hidden p-2">
           <div className="flex items-center h-full sm:justify-center xl:justify-start p-2 sidebar-separator-bottom">
             <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-              <span className="text-white font-bold text-sm">CT</span>
+              <span className="text-foreground font-bold text-sm">CT</span>
             </div>
             <div className="block sm:hidden xl:block ml-2">
-              <div className="font-bold text-white text-sm">Admin User</div>
+              <div className="font-bold text-foreground text-sm">Admin User</div>
               <div className="text-xs text-muted-foreground">Premium Account</div>
             </div>
             <div className="flex-grow block sm:hidden xl:block" />
-            <Gear className="block sm:hidden xl:block w-4 h-4 text-muted-foreground hover:text-white cursor-pointer transition-colors" />
+            <Gear className="block sm:hidden xl:block w-4 h-4 text-muted-foreground hover:text-foreground cursor-pointer transition-colors" />
           </div>
         </div>
       </motion.aside>

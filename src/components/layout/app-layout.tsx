@@ -1,21 +1,39 @@
 'use client'
 
 import { Header } from './header'
+import { Footer } from './footer'
 
 interface AppLayoutProps {
   children: React.ReactNode
+  footerProps?: {
+    apiHealth?: {
+      coingecko: boolean
+      coinpaprika: boolean
+      feargreed: boolean
+    }
+    lastUpdated?: string
+    sources?: {
+      price: string
+      dominance: string
+      metrics: string
+      fearGreed: number
+    }
+  }
 }
 
-export function AppLayout({ children }: AppLayoutProps) {
+export function AppLayout({ children, footerProps }: AppLayoutProps) {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background flex flex-col">
       {/* Header */}
       <Header />
 
       {/* Main content */}
-      <main className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
+      <main className="flex-1 container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
         {children}
       </main>
+
+      {/* Footer */}
+      <Footer {...footerProps} />
     </div>
   )
 }

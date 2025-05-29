@@ -2,6 +2,7 @@
 
 import { ActionSignal, MetricAnalysis } from '@/lib/api/bitcoin'
 import { TrendUp, TrendDown, Minus, Warning } from '@phosphor-icons/react'
+import { getSignalStyle } from '@/lib/constants/signals'
 
 interface ActionSignalProps {
   analysis: MetricAnalysis
@@ -9,12 +10,8 @@ interface ActionSignalProps {
 }
 
 function getSignalColor(signal: ActionSignal): string {
-  switch (signal) {
-    case 'ACCUMULATE': return 'text-green-400 bg-green-400/10 border-green-400/20'
-    case 'HOLD': return 'text-blue-400 bg-blue-400/10 border-blue-400/20'
-    case 'DISTRIBUTE': return 'text-yellow-400 bg-yellow-400/10 border-yellow-400/20'
-    case 'SELL': return 'text-red-400 bg-red-400/10 border-red-400/20'
-  }
+  const style = getSignalStyle(signal)
+  return `${style.text} ${style.bg} ${style.border}`
 }
 
 function getSignalIcon(signal: ActionSignal) {

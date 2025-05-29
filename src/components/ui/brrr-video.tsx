@@ -49,16 +49,12 @@ export function BrrrVideo({ trigger = false, className = '', size = 'medium' }: 
     >
       <video
         ref={videoRef}
-        className="w-full h-full object-cover rounded-lg opacity-80"
+        className="w-full h-full object-cover rounded-lg"
         muted
         loop
         autoPlay
         playsInline
         preload="auto"
-        style={{ 
-          mixBlendMode: 'multiply',
-          filter: 'brightness(1.2) contrast(1.1)'
-        }}
       >
         <source src="/videos/go-brr.mp4" type="video/mp4" />
         {/* Fallback for browsers that don't support video */}

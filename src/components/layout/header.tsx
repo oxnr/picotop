@@ -5,11 +5,9 @@ import { useTheme } from 'next-themes'
 import { useState, useEffect } from 'react'
 import { 
   Sun, 
-  Moon, 
-  MagnifyingGlass,
-  CurrencyBtc
+  Moon
 } from '@phosphor-icons/react'
-import { Button } from '@/components/ui'
+import { Button, PicojeetWordmark } from '@/components/ui'
 
 export function Header() {
   const { theme, setTheme } = useTheme()
@@ -33,27 +31,11 @@ export function Header() {
         <div className="flex h-16 items-center justify-between">
           {/* Left side - Logo */}
           <div className="flex items-center space-x-4">
-            <div className="flex items-center space-x-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-orange-500 to-red-500">
-                <CurrencyBtc className="h-5 w-5 text-white" weight="bold" />
-              </div>
-              <span className="text-xl font-bold text-white">CycleTop</span>
-            </div>
+            <PicojeetWordmark />
           </div>
 
-          {/* Center - Search (now more prominent) */}
-          <div className="flex-1 max-w-2xl mx-8">
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <MagnifyingGlass className="h-5 w-5 text-muted-foreground" />
-              </div>
-              <input
-                type="search"
-                placeholder="Search Bitcoin metrics, app rankings, market data..."
-                className="block w-full pl-12 pr-4 py-3 text-base bg-input border border-border rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all shadow-sm hover:shadow-md focus:shadow-lg"
-              />
-            </div>
-          </div>
+          {/* Spacer */}
+          <div className="flex-1"></div>
 
           {/* Right side - Controls */}
           <div className="flex items-center">

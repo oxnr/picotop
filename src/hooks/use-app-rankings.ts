@@ -1,10 +1,10 @@
 'use client'
 
 import { useQuery } from '@tanstack/react-query'
-import { AppStoreRankings } from '@/lib/api/app-store'
+import { RealAppStoreRankings } from '@/lib/api/real-app-store'
 
 export function useAppRankings() {
-  return useQuery<AppStoreRankings>({
+  return useQuery<RealAppStoreRankings>({
     queryKey: ['app-rankings'],
     queryFn: async () => {
       const response = await fetch('/api/rankings')

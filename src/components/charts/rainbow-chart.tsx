@@ -44,7 +44,7 @@ export function RainbowChart({ currentPrice, rainbowBand }: RainbowChartProps) {
       <CardHeader className="pb-4">
         <div className="flex items-center space-x-2">
           <TrendUp className="h-5 w-5 text-accent-purple" />
-          <CardTitle className="text-white">Bitcoin Rainbow Chart</CardTitle>
+          <CardTitle className="text-foreground">Bitcoin Rainbow Chart</CardTitle>
         </div>
         <p className="text-sm text-muted-foreground">
           Long-term price bands based on logarithmic regression
@@ -53,7 +53,7 @@ export function RainbowChart({ currentPrice, rainbowBand }: RainbowChartProps) {
       <CardContent className="space-y-6">
         {/* Current Status */}
         <div className="text-center p-4 bg-secondary/10 rounded-lg border-l-4 border-primary">
-          <div className="text-2xl font-bold text-white mb-1">
+          <div className="text-2xl font-bold text-foreground mb-1">
             {rainbowBand} Band
           </div>
           <div className="text-lg text-primary font-medium mb-2">
@@ -72,7 +72,7 @@ export function RainbowChart({ currentPrice, rainbowBand }: RainbowChartProps) {
 
         {/* Rainbow Bands Visualization */}
         <div className="space-y-2">
-          <h3 className="text-sm font-medium text-white mb-3">Price Bands & Signals</h3>
+          <h3 className="text-sm font-medium text-foreground mb-3">Price Bands & Signals</h3>
           {RAINBOW_BANDS.map((band, index) => {
             const isCurrentBand = band.name === rainbowBand
             const isBelow = index < currentBandIndex
@@ -101,7 +101,7 @@ export function RainbowChart({ currentPrice, rainbowBand }: RainbowChartProps) {
                     style={{ backgroundColor: band.color }}
                   />
                   <div>
-                    <div className={`font-medium ${isCurrentBand ? 'text-primary' : 'text-white'}`}>
+                    <div className={`font-medium ${isCurrentBand ? 'text-primary' : 'text-foreground'}`}>
                       {band.name} Band
                     </div>
                     <div className="text-xs text-muted-foreground">
@@ -141,7 +141,7 @@ export function RainbowChart({ currentPrice, rainbowBand }: RainbowChartProps) {
         <div className="pt-4 border-t border-border">
           <div className="grid grid-cols-2 gap-4 text-xs">
             <div>
-              <div className="font-medium text-white mb-2">How to Read:</div>
+              <div className="font-medium text-foreground mb-2">How to Read:</div>
               <ul className="space-y-1 text-muted-foreground">
                 <li>• Red/Orange: Accumulation zones</li>
                 <li>• Yellow/Green: Fair value range</li>
@@ -149,7 +149,7 @@ export function RainbowChart({ currentPrice, rainbowBand }: RainbowChartProps) {
               </ul>
             </div>
             <div>
-              <div className="font-medium text-white mb-2">Current Position:</div>
+              <div className="font-medium text-foreground mb-2">Current Position:</div>
               <div className="text-muted-foreground">
                 Bitcoin is in the <span className="text-primary font-medium">{rainbowBand}</span> band,
                 suggesting to <span className={`font-medium ${

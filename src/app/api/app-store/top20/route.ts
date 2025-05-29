@@ -1,13 +1,19 @@
 import { NextResponse } from 'next/server'
-import { fetchTop20Rankings } from '@/lib/api/app-store'
+import { fetchRealTop20Rankings } from '@/lib/api/real-app-store'
 
 export async function GET() {
   try {
-    const rankings = await fetchTop20Rankings()
+    const rankings = await fetchRealTop20Rankings()
 
     return NextResponse.json({
       success: true,
       data: rankings,
+      meta: {
+        source: 'Enhanced mock data based on real 2025 top 20 finance app rankings',
+        lastUpdated: new Date().toISOString(),
+        realApiAvailable: false, // Set to true when real APIs are integrated
+        cryptoAppsHighlighted: true
+      },
       timestamp: new Date().toISOString(),
     })
   } catch (error) {
