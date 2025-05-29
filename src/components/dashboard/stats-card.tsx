@@ -22,19 +22,19 @@ export function StatsCard({ metric, index = 0 }: StatsCardProps) {
     
     if (title.includes('nupl')) {
       // NUPL ranges from 0 to 1, extract number from value like "0.780"
-      const nuplValue = parseFloat(value)
+      const nuplValue = parseFloat(String(value))
       return Math.min(Math.max(nuplValue * 100, 0), 100)
     }
     
     if (title.includes('dominance')) {
       // BTC Dominance ranges from ~30% to ~70%, normalize to 0-100%
-      const domValue = parseFloat(value.replace('%', ''))
+      const domValue = parseFloat(String(value).replace('%', ''))
       return Math.min(Math.max(((domValue - 30) / 40) * 100, 0), 100)
     }
     
     if (title.includes('bitcoin price')) {
       // Bitcoin price - use a logarithmic scale relative to cycle ranges
-      const priceValue = parseFloat(value.replace(/[$,]/g, ''))
+      const priceValue = parseFloat(String(value).replace(/[$,]/g, ''))
       // Scale based on current cycle range (e.g., $15K to $200K)
       const minPrice = 15000
       const maxPrice = 200000
@@ -43,13 +43,13 @@ export function StatsCard({ metric, index = 0 }: StatsCardProps) {
     
     if (title.includes('sopr')) {
       // SOPR typically ranges from 0.8 to 1.2, normalize to 0-100%
-      const soprValue = parseFloat(value)
+      const soprValue = parseFloat(String(value))
       return Math.min(Math.max(((soprValue - 0.8) / 0.4) * 100, 0), 100)
     }
     
     if (title.includes('rank')) {
       // App rankings - inverse scale (lower rank = higher percentage)
-      const rankValue = parseFloat(value.replace('#', ''))
+      const rankValue = parseFloat(String(value).replace('#', ''))
       return Math.min(Math.max((100 - rankValue), 0), 100)
     }
     

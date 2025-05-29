@@ -24,7 +24,7 @@ export function LiveDashboard() {
 
   // Trigger BRRR video when price goes up significantly
   useEffect(() => {
-    if (bitcoinData?.price?.priceChangePercentage24h > 5) {
+    if (bitcoinData?.price?.priceChangePercentage24h && bitcoinData.price.priceChangePercentage24h > 5) {
       setBrrrTrigger(true)
       setTimeout(() => setBrrrTrigger(false), 3000)
     }
@@ -586,7 +586,7 @@ export function LiveDashboard() {
                           <div className="text-xs text-muted-foreground">Finance App</div>
                         </div>
                         <div className="space-y-3">
-                          {rankings.map((ranking) => (
+                          {rankings.map((ranking: any) => (
                             <div key={ranking.appId} className="flex justify-between items-center text-sm">
                               <div className="flex items-center space-x-2">
                                 <span className="text-muted-foreground capitalize font-medium">

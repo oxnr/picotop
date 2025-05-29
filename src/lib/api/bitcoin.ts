@@ -125,7 +125,7 @@ export async function fetchBitcoinHistoricalData(
     if (interval === 'monthly' && historicalData.length > 24) {
       // Sample every nth point to keep around 24 data points for better chart readability
       const step = Math.ceil(historicalData.length / 24)
-      return historicalData.filter((_, index) => index % step === 0)
+      return historicalData.filter((_: any, index: number) => index % step === 0)
     }
 
     return historicalData
