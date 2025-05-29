@@ -1,36 +1,165 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# CycleTop
 
-## Getting Started
+A modern, sophisticated web application for predicting Bitcoin cycle tops through comprehensive market analysis and proprietary algorithms.
 
-First, run the development server:
+## 🎯 Overview
 
+CycleTop is an advanced Bitcoin cycle prediction platform that combines multiple data sources and metrics to provide insights into potential Bitcoin cycle peaks. Built with cutting-edge web technologies, it features a sleek, modern interface with delightful animations and comprehensive market analysis tools.
+
+## 🚀 Features
+
+### Core Functionality
+- **App Store Rankings Analysis**: Track crypto app rankings (Coinbase, Phantom, etc.) as market sentiment indicators
+- **Bitcoin Metrics Dashboard**: Comprehensive analysis of key Bitcoin metrics including:
+  - NUPL (Net Unrealized Profit/Loss)
+  - SOPR (Spent Output Profit Ratio)
+  - MVZR (Market Value to Realized Value Z-Score)
+  - Rainbow Chart analysis
+- **Proprietary Cycle Prediction**: Advanced algorithms for cycle top prediction
+- **Real-time Data Integration**: Live market data and analytics
+
+### Design & User Experience
+- **Modern UI/UX**: Sleek, polished interface with subtle yet powerful animations
+- **Phosphor Icons**: Beautiful, consistent iconography throughout the app
+- **Responsive Design**: Optimized for desktop and mobile experiences
+- **Dark/Light Mode**: Adaptive theming for user preference
+- **Interactive Visualizations**: Rich charts and graphs for data analysis
+
+## 🛠 Tech Stack
+
+### Frontend
+- **Next.js 15**: React framework with App Router
+- **TypeScript**: Type-safe development
+- **Tailwind CSS**: Utility-first CSS framework
+- **Phosphor Icons**: Modern icon library
+- **Framer Motion**: Smooth animations and transitions
+- **Chart.js/Recharts**: Data visualization
+- **React Query**: Data fetching and state management
+
+### Development Tools
+- **ESLint**: Code linting and quality
+- **Prettier**: Code formatting
+- **Husky**: Git hooks for code quality
+- **Turbopack**: Fast development bundling
+
+## 📋 Architecture
+
+```
+src/
+├── app/                 # Next.js App Router
+│   ├── dashboard/       # Main dashboard pages
+│   ├── metrics/         # Individual metric pages
+│   └── api/            # API routes
+├── components/          # Reusable UI components
+│   ├── ui/             # Base UI components
+│   ├── charts/         # Chart components
+│   └── dashboard/      # Dashboard-specific components
+├── lib/                # Utility functions and configurations
+│   ├── api/            # API clients and data fetching
+│   ├── utils/          # Helper functions
+│   └── types/          # TypeScript type definitions
+├── hooks/              # Custom React hooks
+└── styles/             # Global styles and theme configuration
+```
+
+## 🚦 Getting Started
+
+### Prerequisites
+- Node.js 18+ 
+- npm, yarn, pnpm, or bun
+
+### Installation
+
+1. Clone the repository:
+```bash
+git clone <repository-url>
+cd CycleTop
+```
+
+2. Install dependencies:
+```bash
+npm install
+# or
+yarn install
+# or
+pnpm install
+```
+
+3. Set up environment variables:
+```bash
+cp .env.example .env.local
+```
+
+4. Start the development server:
 ```bash
 npm run dev
 # or
 yarn dev
 # or
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+5. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 📊 Data Sources
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### App Store Rankings
+- iOS App Store API
+- Google Play Store API
+- Third-party app analytics services
 
-## Learn More
+### Bitcoin Metrics
+- On-chain data providers (Glassnode, IntoTheBlock)
+- Exchange APIs for price data
+- Custom calculation engines for proprietary metrics
 
-To learn more about Next.js, take a look at the following resources:
+## 🎨 Design Philosophy
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+CycleTop is designed to be:
+- **Intuitive**: Easy to understand complex market data
+- **Elegant**: Beautiful, modern interface that's pleasing to use
+- **Performant**: Fast loading and smooth interactions
+- **Accessible**: Inclusive design for all users
+- **Delightful**: Subtle animations that enhance the experience
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🔮 Roadmap
 
-## Deploy on Vercel
+### Phase 1: Foundation
+- [x] Project setup and architecture
+- [ ] Core dashboard implementation
+- [ ] Basic metric integrations
+- [ ] UI component library
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Phase 2: Data Integration
+- [ ] App store rankings API integration
+- [ ] Bitcoin metrics data pipeline
+- [ ] Real-time data streaming
+- [ ] Historical data analysis
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Phase 3: Advanced Features
+- [ ] Proprietary prediction algorithms
+- [ ] Machine learning integration
+- [ ] Advanced visualization tools
+- [ ] User customization options
+
+### Phase 4: Polish & Optimization
+- [ ] Performance optimization
+- [ ] Advanced animations
+- [ ] Mobile app development
+- [ ] API documentation
+
+## 🤝 Contributing
+
+We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙋‍♂️ Support
+
+For questions, suggestions, or support, please open an issue or contact the development team.
+
+---
+
+**Built with ❤️ for the Bitcoin community**
