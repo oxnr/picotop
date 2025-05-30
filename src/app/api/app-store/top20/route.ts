@@ -9,10 +9,11 @@ export async function GET() {
       success: true,
       data: rankings,
       meta: {
-        source: 'Enhanced mock data based on real 2025 top 20 finance app rankings',
+        source: 'Real-time iTunes RSS API + Enhanced mock data for non-crypto apps',
         lastUpdated: new Date().toISOString(),
-        realApiAvailable: false, // Set to true when real APIs are integrated
-        cryptoAppsHighlighted: true
+        realApiAvailable: true, // iTunes RSS API now integrated for Coinbase
+        cryptoAppsHighlighted: true,
+        coinbaseRankingSource: 'iTunes RSS API (real-time)'
       },
       timestamp: new Date().toISOString(),
     })

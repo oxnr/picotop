@@ -9,9 +9,10 @@ export async function GET() {
       success: true,
       data: rankings,
       meta: {
-        source: 'Enhanced mock data based on real 2025 rankings',
+        source: 'Real-time iTunes RSS API + Enhanced mock data for other apps',
         lastUpdated: new Date().toISOString(),
-        realApiAvailable: false // Set to true when real APIs are integrated
+        realApiAvailable: true, // iTunes RSS API now integrated for Coinbase
+        coinbaseRankingSource: 'iTunes RSS API (real-time)'
       },
       timestamp: new Date().toISOString(),
     })

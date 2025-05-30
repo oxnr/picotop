@@ -1,14 +1,14 @@
-# Picotop Architecture
+# Picojeet Architecture
 
-A comprehensive architectural overview of Picotop - the sophisticated Bitcoin cycle prediction platform built as part of the Odyssey ecosystem.
+A comprehensive architectural overview of Picojeet - the sophisticated Bitcoin cycle prediction platform delivering actionable trading signals through advanced on-chain analytics.
 
 ## 🏗️ System Overview
 
-Picotop is architected as a modern, real-time analytics platform using Next.js 15 with a focus on accurate market prediction, beautiful user interfaces, and seamless data integration across multiple sources.
+Picojeet is architected as a modern, real-time analytics platform using Next.js 15 with a focus on accurate cycle prediction, beautiful visualizations, and seamless multi-source data integration.
 
 ```mermaid
 graph TB
-    subgraph "Client Layer - Picotop Frontend"
+    subgraph "Client Layer - Picojeet Frontend"
         UI[React Components + Framer Motion]
         Charts[Recharts Visualizations]
         Theme[Dark/Light Mode System]
@@ -53,46 +53,17 @@ graph TB
     Cache --> RealTimeData
 ```
 
-## 🎯 Odyssey Ecosystem Integration
+## 🎯 Core Features & Architecture
 
-### Platform Philosophy
-Picotop embodies the Odyssey vision of democratizing advanced crypto analytics while maintaining enterprise-grade reliability and user experience.
-
-```mermaid
-graph LR
-    subgraph "Odyssey Ecosystem"
-        Picotop[Picotop - Cycle Prediction]
-        OtherApps[Other Odyssey Apps]
-        SharedInfra[Shared Infrastructure]
-        Community[Odyssey Community]
-    end
-    
-    subgraph "Binary Builders"
-        Development[Development Team]
-        Architecture[Architecture Standards]
-        QualityAssurance[Quality Assurance]
-    end
-    
-    Picotop --> SharedInfra
-    OtherApps --> SharedInfra
-    SharedInfra --> Community
-    Development --> Picotop
-    Architecture --> Development
-    QualityAssurance --> Architecture
-```
-
-## 📊 Advanced Prediction Architecture
-
-### Cycle Prediction Engine
+### Bitcoin Cycle Prediction Engine
 
 ```mermaid
 graph TB
     subgraph "Historical Data Analysis"
-        COVID[COVID Crash (Mar 2020)]
-        Bull2020[2020-2021 Bull Run]
-        Bear2022[2022 Bear Market]
-        Recovery2023[2023 Recovery]
-        Current2024[2024-2025 Cycle]
+        HistoricalHigh[Historical Monthly Highs]
+        PatternRecognition[Pattern Recognition]
+        CycleMapping[Cycle Mapping]
+        VolatilityAnalysis[Volatility Analysis]
     end
     
     subgraph "Prediction Models"
@@ -103,52 +74,51 @@ graph TB
     end
     
     subgraph "Output Predictions"
-        CycleTop[Sept 2025 Cycle Top]
-        PriceTarget[$150K-$185K Target]
-        AltSeason[Oct 2025 ALT Peak]
-        Distribution[Distribution Strategy]
+        CycleTop[Predicted Cycle Top]
+        PriceTarget[$132K Target]
+        TimingPrediction[Timing Predictions]
+        ActionableSignals[Actionable Signals]
     end
     
-    COVID --> PiCycle
-    Bull2020 --> Rainbow
-    Bear2022 --> NUPL
-    Recovery2023 --> AppCorrelation
-    Current2024 --> PiCycle
+    HistoricalHigh --> PiCycle
+    PatternRecognition --> Rainbow
+    CycleMapping --> NUPL
+    VolatilityAnalysis --> AppCorrelation
     
     PiCycle --> CycleTop
     Rainbow --> PriceTarget
-    NUPL --> AltSeason
-    AppCorrelation --> Distribution
+    NUPL --> TimingPrediction
+    AppCorrelation --> ActionableSignals
 ```
 
-### Real-time Market Analysis
+### Real-time Chart System
 
 ```mermaid
 sequenceDiagram
     participant User
-    participant Dashboard
+    participant Chart
     participant API
     participant Prediction
     participant External
     
-    User->>Dashboard: View Market Analysis
-    Dashboard->>API: Request Latest Data
+    User->>Chart: View Bitcoin Chart
+    Chart->>API: Request Latest Data
     API->>External: Fetch Bitcoin Price
-    API->>External: Get App Rankings
-    API->>External: Check Fear & Greed
+    API->>External: Get Historical Data
     
     External->>API: Return Market Data
-    API->>Prediction: Analyze Cycle Position
-    Prediction->>API: Generate Signals
-    API->>Dashboard: Return Analysis
-    Dashboard->>User: Display Predictions
+    API->>Prediction: Calculate Predictions
+    Prediction->>API: Generate Future Points
+    API->>Chart: Return Chart Data
+    Chart->>User: Display Enhanced Chart
     
-    Note over Dashboard,User: Real-time updates every 30s
+    Note over Chart,User: Real-time price updates
+    Note over Chart,User: Historical highs + current + predictions
 ```
 
 ## 🎨 Component Architecture
 
-### Chart System Architecture
+### Enhanced Chart System
 
 ```mermaid
 graph TB
@@ -158,425 +128,309 @@ graph TB
         NUPL[Visual NUPL Chart]
         SOPR[Visual SOPR Chart]
         MVRV[Visual MVRV Chart]
-        Comprehensive[Comprehensive Metrics]
+        MiniChart[Mini Chart Component]
     end
     
-    subgraph "Base Chart Infrastructure"
-        Recharts[Recharts Library]
-        CustomTicks[Custom Tick Components]
-        Tooltips[Interactive Tooltips]
-        Animations[Framer Motion]
+    subgraph "Chart Features"
+        HistoricalLine[Historical Price Line - Blue]
+        CurrentPoint[Current Price Point - Purple]
+        PredictionLine[Prediction Line - Orange Dashed]
+        InteractiveTooltips[Interactive Tooltips]
     end
     
     subgraph "Data Processing"
-        HistoricalData[Historical Price Data]
-        PredictionData[Prediction Algorithms]
-        RealTimeUpdates[Real-time Updates]
-        DataValidation[Data Validation]
+        MonthlyHighs[Monthly High Values]
+        DynamicCurrent[Dynamic Current Month]
+        PredictionAlgorithm[Prediction Algorithm]
+        LabelAlignment[Proper Label Alignment]
     end
     
-    EnhancedBitcoin --> Recharts
-    Rainbow --> CustomTicks
-    NUPL --> Tooltips
-    SOPR --> Animations
-    MVRV --> Animations
-    Comprehensive --> Recharts
+    EnhancedBitcoin --> HistoricalLine
+    EnhancedBitcoin --> CurrentPoint
+    EnhancedBitcoin --> PredictionLine
+    Rainbow --> InteractiveTooltips
     
-    HistoricalData --> EnhancedBitcoin
-    PredictionData --> Rainbow
-    RealTimeUpdates --> NUPL
-    DataValidation --> SOPR
+    MonthlyHighs --> HistoricalLine
+    DynamicCurrent --> CurrentPoint
+    PredictionAlgorithm --> PredictionLine
+    LabelAlignment --> InteractiveTooltips
 ```
 
-### Theme System Architecture
+### Dashboard Layout System
 
 ```mermaid
 graph TB
-    subgraph "Theme Provider"
-        ThemeContext[Theme Context]
-        CSSVariables[CSS Variables]
-        TailwindConfig[Tailwind Configuration]
+    subgraph "Layout Components"
+        AppLayout[App Layout Wrapper]
+        Header[Header with Branding]
+        Sidebar[Collapsible Sidebar]
+        Footer[Footer Component]
     end
     
-    subgraph "Dark Mode (Primary)"
-        DarkColors[Dark Color Palette]
-        DarkCharts[Dark Chart Themes]
-        DarkUI[Dark UI Elements]
+    subgraph "Dashboard Sections"
+        LiveDashboard[Live Dashboard]
+        StatsCards[Stats Cards Grid]
+        MetricCards[Metric Cards]
+        BRRRVideo[BRRR Video Component]
     end
     
-    subgraph "Light Mode (Enhanced)"
-        LightColors[Light Color Palette]
-        LightCharts[Light Chart Themes]
-        LightUI[Light UI Elements]
+    subgraph "Interactive Elements"
+        ThemeToggle[Theme Toggle]
+        MobileMenu[Mobile Menu]
+        ScrollAnimations[Scroll Animations]
+        HoverEffects[Hover Effects]
     end
     
-    subgraph "Component Adaptation"
-        TextForeground[text-foreground Classes]
-        BackgroundCard[bg-card Classes]
-        BorderColors[border-border Classes]
-        AccentColors[accent Colors]
+    AppLayout --> Header
+    AppLayout --> Sidebar
+    AppLayout --> Footer
+    
+    LiveDashboard --> StatsCards
+    LiveDashboard --> MetricCards
+    LiveDashboard --> BRRRVideo
+    
+    Header --> ThemeToggle
+    Sidebar --> MobileMenu
+    StatsCards --> ScrollAnimations
+    MetricCards --> HoverEffects
+```
+
+## 📊 Cycle Prediction Algorithm
+
+### Mathematical Model
+
+```mermaid
+graph TB
+    subgraph "Input Variables"
+        CurrentPrice[Current Price: $105,722]
+        HistoricalData[Historical Monthly Highs]
+        CyclePosition[Current Cycle Position]
+        VolatilityFactors[Volatility Factors]
     end
     
-    ThemeContext --> CSSVariables
-    CSSVariables --> TailwindConfig
+    subgraph "Calculation Engine"
+        BaseTarget[Base Target = Current × 1.25]
+        CycleAdjustment[Cycle Position Adjustment]
+        VolatilitySmoothing[Volatility Smoothing]
+        PatternMatching[Pattern Matching]
+    end
     
-    TailwindConfig --> DarkColors
-    TailwindConfig --> LightColors
+    subgraph "Output Prediction"
+        PredictedPeak[Predicted Peak: $132K]
+        PeakTiming[Peak Timing: 6 months]
+        ConfidenceLevel[Confidence Level: High]
+        ActionSignal[Action Signal: ACCUMULATE]
+    end
     
-    DarkColors --> TextForeground
-    LightColors --> TextForeground
-    DarkCharts --> BackgroundCard
-    LightCharts --> BackgroundCard
-    DarkUI --> BorderColors
-    LightUI --> AccentColors
+    CurrentPrice --> BaseTarget
+    HistoricalData --> CycleAdjustment
+    CyclePosition --> VolatilitySmoothing
+    VolatilityFactors --> PatternMatching
+    
+    BaseTarget --> PredictedPeak
+    CycleAdjustment --> PeakTiming
+    VolatilitySmoothing --> ConfidenceLevel
+    PatternMatching --> ActionSignal
+```
+
+### Prediction Formula
+
+The core prediction algorithm uses the following formula:
+
+```
+Predicted Peak = Current Price × Growth Factor × Cycle Multiplier × Volatility Dampener
+
+Where:
+- Growth Factor = 1.25 (base 25% growth expectation)
+- Cycle Multiplier = f(months_to_peak, historical_patterns)
+- Volatility Dampener = sin(cycle_position) × volatility_constant
+- Peak Timing = 6 months from current (based on cycle analysis)
 ```
 
 ## 📱 App Store Integration Architecture
 
-### Ranking Analysis System
+### Retail Interest Tracking
 
 ```mermaid
 graph TB
-    subgraph "Data Collection"
-        iOSAPI[iOS App Store API]
-        GoogleAPI[Google Play API]
-        ThirdParty[Third-party Analytics]
-        ManualTracking[Manual Tracking]
+    subgraph "Data Sources"
+        AppStoreAPI[App Store Connect API]
+        GooglePlayAPI[Google Play Console API]
+        RankingServices[Third-party Ranking Services]
+        ManualTracking[Manual Verification]
     end
     
-    subgraph "App Monitoring"
-        Coinbase[Coinbase Tracking]
+    subgraph "Tracked Applications"
+        Coinbase[Coinbase - Primary Indicator]
         Phantom[Phantom Wallet]
         TrustWallet[Trust Wallet]
         MetaMask[MetaMask]
-        Crypto[Other Crypto Apps]
+        CryptoApps[Other Crypto Apps]
     end
     
     subgraph "Analysis Engine"
-        RankingCorrelation[Ranking Correlation]
-        SentimentAnalysis[Sentiment Analysis]
-        CycleMapping[Cycle Mapping]
-        RetailInterest[Retail Interest Index]
+        RankingTrends[Ranking Trend Analysis]
+        CorrelationEngine[Price Correlation Engine]
+        RetailSentiment[Retail Sentiment Scoring]
+        CycleIndicator[Cycle Position Indicator]
     end
     
-    subgraph "Market Psychology"
-        EarlyAdoption[Early Adoption Phase]
-        Mainstream[Mainstream Interest]
-        Euphoria[Euphoria Phase]
-        Distribution[Distribution Signal]
-    end
-    
-    iOSAPI --> Coinbase
-    GoogleAPI --> Phantom
-    ThirdParty --> TrustWallet
+    AppStoreAPI --> Coinbase
+    GooglePlayAPI --> Phantom
+    RankingServices --> TrustWallet
     ManualTracking --> MetaMask
     
-    Coinbase --> RankingCorrelation
-    Phantom --> SentimentAnalysis
-    TrustWallet --> CycleMapping
-    MetaMask --> RetailInterest
-    
-    RankingCorrelation --> EarlyAdoption
-    SentimentAnalysis --> Mainstream
-    CycleMapping --> Euphoria
-    RetailInterest --> Distribution
+    Coinbase --> RankingTrends
+    Phantom --> CorrelationEngine
+    TrustWallet --> RetailSentiment
+    MetaMask --> CycleIndicator
 ```
 
-## 🔮 Advanced Analytics Pipeline
+## 🎨 Theme System Architecture
 
-### Multi-Metric Convergence Analysis
+### Dual Theme Implementation
 
 ```mermaid
 graph TB
-    subgraph "Primary Indicators"
-        PiCycleIndicator[Pi Cycle Top Indicator]
-        RainbowPosition[Rainbow Chart Position]
-        NUPLLevel[NUPL Level Analysis]
-        AppRankings[App Store Rankings]
+    subgraph "Theme Provider System"
+        ThemeContext[Next Themes Context]
+        CSSVariables[CSS Custom Properties]
+        TailwindConfig[Tailwind CSS Configuration]
+        SystemDetection[System Preference Detection]
     end
     
-    subgraph "Secondary Metrics"
-        SOPRTrend[SOPR Trend Analysis]
-        MVRVScore[MVRV Z-Score]
-        DominanceTrend[Bitcoin Dominance]
-        FearGreedIndex[Fear & Greed Index]
+    subgraph "Dark Mode (Primary)"
+        DarkBackground[Dark Backgrounds]
+        DarkText[Light Text on Dark]
+        DarkCharts[Dark Chart Themes]
+        DarkAccents[Blue/Purple Accents]
     end
     
-    subgraph "Convergence Engine"
-        WeightedAnalysis[Weighted Analysis]
-        ConfidenceScore[Confidence Scoring]
-        SignalGeneration[Signal Generation]
-        TimingPrediction[Timing Prediction]
+    subgraph "Light Mode (Enhanced)"
+        LightBackground[Light Backgrounds]
+        LightText[Dark Text on Light]
+        LightCharts[Light Chart Themes]
+        LightAccents[Adjusted Accents]
     end
     
-    subgraph "Output Signals"
-        ACCUMULATE[ACCUMULATE Signal]
-        HOLD[HOLD Signal]
-        DISTRIBUTE[DISTRIBUTE Signal]
-        SELL[SELL Signal]
+    subgraph "Component Integration"
+        ConditionalClasses[Conditional CSS Classes]
+        ChartTheming[Chart Theme Switching]
+        IconAdaptation[Icon Color Adaptation]
+        AnimationConsistency[Animation Consistency]
     end
     
-    PiCycleIndicator --> WeightedAnalysis
-    RainbowPosition --> WeightedAnalysis
-    NUPLLevel --> ConfidenceScore
-    AppRankings --> ConfidenceScore
+    ThemeContext --> CSSVariables
+    CSSVariables --> TailwindConfig
+    TailwindConfig --> SystemDetection
     
-    SOPRTrend --> SignalGeneration
-    MVRVScore --> SignalGeneration
-    DominanceTrend --> TimingPrediction
-    FearGreedIndex --> TimingPrediction
+    SystemDetection --> DarkBackground
+    SystemDetection --> LightBackground
     
-    WeightedAnalysis --> ACCUMULATE
-    ConfidenceScore --> HOLD
-    SignalGeneration --> DISTRIBUTE
-    TimingPrediction --> SELL
+    DarkBackground --> ConditionalClasses
+    LightBackground --> ConditionalClasses
+    DarkCharts --> ChartTheming
+    LightCharts --> ChartTheming
 ```
 
-### Historical Pattern Recognition
+## 🚀 Performance Optimization
 
-```mermaid
-graph LR
-    subgraph "2017-2018 Cycle Analysis"
-        ICOBoom[ICO Boom Pattern]
-        BTCPeak2017[BTC Peak Dec 2017]
-        ALTPeak2018[ALT Peak Jan 2018]
-        Crash2018[2018 Crash Pattern]
-    end
-    
-    subgraph "2020-2021 Cycle Analysis"
-        COVIDCrash[COVID Crash Pattern]
-        InstitutionalBuying[Institutional Phase]
-        MemeSupercycle[Meme Coin Supercycle]
-        DoublePeak[Double Peak Pattern]
-    end
-    
-    subgraph "2024-2025 Prediction"
-        ETFApproval[ETF Approval Effect]
-        CurrentPattern[Current Pattern Match]
-        PredictedPeak[Predicted Peak Timing]
-        ALTSeasonTiming[ALT Season Timing]
-    end
-    
-    ICOBoom --> COVIDCrash
-    BTCPeak2017 --> InstitutionalBuying
-    ALTPeak2018 --> MemeSupercycle
-    Crash2018 --> DoublePeak
-    
-    COVIDCrash --> ETFApproval
-    InstitutionalBuying --> CurrentPattern
-    MemeSupercycle --> PredictedPeak
-    DoublePeak --> ALTSeasonTiming
-```
-
-## 🚀 Deployment & Infrastructure
-
-### Vercel Deployment Architecture
+### Frontend Optimization Strategy
 
 ```mermaid
 graph TB
-    subgraph "Development"
-        LocalDev[Local Development]
-        GitCommit[Git Commits]
-        GitHubRepo[GitHub Repository]
-    end
-    
-    subgraph "Vercel Platform"
-        BuildProcess[Build Process]
-        EdgeNetwork[Edge Network]
-        ServerlessAPI[Serverless API Routes]
-        StaticAssets[Static Asset CDN]
-    end
-    
-    subgraph "External Services"
-        CoinGeckoAPI[CoinGecko API]
-        CoinpaprikaAPI[Coinpaprika API]
-        AppStoreServices[App Store Services]
-        AnalyticsServices[Analytics Services]
-    end
-    
-    subgraph "Monitoring & Performance"
-        RealUserMonitoring[Real User Monitoring]
-        APIHealthChecks[API Health Checks]
-        PerformanceMetrics[Performance Metrics]
-        ErrorTracking[Error Tracking]
-    end
-    
-    LocalDev --> GitCommit
-    GitCommit --> GitHubRepo
-    GitHubRepo --> BuildProcess
-    
-    BuildProcess --> EdgeNetwork
-    BuildProcess --> ServerlessAPI
-    BuildProcess --> StaticAssets
-    
-    ServerlessAPI --> CoinGeckoAPI
-    ServerlessAPI --> CoinpaprikaAPI
-    ServerlessAPI --> AppStoreServices
-    
-    EdgeNetwork --> RealUserMonitoring
-    ServerlessAPI --> APIHealthChecks
-    StaticAssets --> PerformanceMetrics
-    BuildProcess --> ErrorTracking
-```
-
-### Performance Optimization Strategy
-
-```mermaid
-graph TB
-    subgraph "Frontend Optimization"
-        CodeSplitting[Code Splitting]
-        LazyLoading[Lazy Loading]
-        ImageOptimization[Image Optimization]
-        CSSOptimization[CSS Optimization]
+    subgraph "Code Optimization"
+        CodeSplitting[Dynamic Imports & Code Splitting]
+        TreeShaking[Tree Shaking]
+        BundleOptimization[Bundle Size Optimization]
+        ComponentLazyLoading[Component Lazy Loading]
     end
     
     subgraph "Data Optimization"
         ReactQuery[React Query Caching]
         APIResponseCaching[API Response Caching]
-        StaticGeneration[Static Generation]
-        IncrementalRegeneration[ISR]
+        StaticGeneration[Static Site Generation]
+        IncrementalRegeneration[Incremental Static Regeneration]
     end
     
     subgraph "Runtime Optimization"
-        FramerMotionOptimization[Framer Motion Optimization]
-        ChartPerformance[Chart Performance]
-        RealTimeUpdates[Optimized Real-time Updates]
-        MemoryManagement[Memory Management]
+        ChartPerformance[Chart Rendering Optimization]
+        AnimationPerformance[Framer Motion Optimization]
+        MemoryManagement[Memory Leak Prevention]
+        ImageOptimization[Next.js Image Optimization]
     end
     
     CodeSplitting --> ReactQuery
-    LazyLoading --> APIResponseCaching
-    ImageOptimization --> StaticGeneration
-    CSSOptimization --> IncrementalRegeneration
+    TreeShaking --> APIResponseCaching
+    BundleOptimization --> StaticGeneration
+    ComponentLazyLoading --> IncrementalRegeneration
     
-    ReactQuery --> FramerMotionOptimization
-    APIResponseCaching --> ChartPerformance
-    StaticGeneration --> RealTimeUpdates
-    IncrementalRegeneration --> MemoryManagement
-```
-
-## 🎨 User Experience Architecture
-
-### Animation System
-
-```mermaid
-graph TB
-    subgraph "Framer Motion Integration"
-        PageTransitions[Page Transitions]
-        ComponentAnimations[Component Animations]
-        ChartAnimations[Chart Animations]
-        ScrollTriggers[Scroll Triggers]
-    end
-    
-    subgraph "BRRR Video System"
-        ScrollDetection[Scroll Detection]
-        RandomSpawning[Random Spawning]
-        VideoManagement[Video Management]
-        PerformanceControl[Performance Control]
-    end
-    
-    subgraph "Interactive Elements"
-        HoverStates[Hover States]
-        ClickFeedback[Click Feedback]
-        LoadingStates[Loading States]
-        ErrorStates[Error States]
-    end
-    
-    PageTransitions --> ScrollDetection
-    ComponentAnimations --> RandomSpawning
-    ChartAnimations --> VideoManagement
-    ScrollTriggers --> PerformanceControl
-    
-    ScrollDetection --> HoverStates
-    RandomSpawning --> ClickFeedback
-    VideoManagement --> LoadingStates
-    PerformanceControl --> ErrorStates
-```
-
-### Responsive Design Strategy
-
-```mermaid
-graph TB
-    subgraph "Mobile First (320px+)"
-        MobileLayout[Mobile Layout]
-        TouchOptimization[Touch Optimization]
-        MobileCharts[Mobile Chart Adaptation]
-        MobileNavigation[Mobile Navigation]
-    end
-    
-    subgraph "Tablet (768px+)"
-        TabletLayout[Tablet Layout]
-        TabletCharts[Enhanced Charts]
-        SidebarIntroduction[Sidebar Introduction]
-        TabletInteractions[Tablet Interactions]
-    end
-    
-    subgraph "Desktop (1024px+)"
-        DesktopLayout[Full Desktop Layout]
-        AdvancedCharts[Advanced Chart Features]
-        FullSidebar[Full Sidebar Experience]
-        KeyboardShortcuts[Keyboard Shortcuts]
-    end
-    
-    subgraph "Large Desktop (1440px+)"
-        LargeLayout[Large Screen Layout]
-        MultiColumnCharts[Multi-column Charts]
-        AdvancedFeatures[Advanced Features]
-        PowerUserTools[Power User Tools]
-    end
-    
-    MobileLayout --> TabletLayout
-    TouchOptimization --> TabletCharts
-    MobileCharts --> SidebarIntroduction
-    MobileNavigation --> TabletInteractions
-    
-    TabletLayout --> DesktopLayout
-    TabletCharts --> AdvancedCharts
-    SidebarIntroduction --> FullSidebar
-    TabletInteractions --> KeyboardShortcuts
-    
-    DesktopLayout --> LargeLayout
-    AdvancedCharts --> MultiColumnCharts
-    FullSidebar --> AdvancedFeatures
-    KeyboardShortcuts --> PowerUserTools
+    ReactQuery --> ChartPerformance
+    APIResponseCaching --> AnimationPerformance
+    StaticGeneration --> MemoryManagement
+    IncrementalRegeneration --> ImageOptimization
 ```
 
 ## 🔐 Security & Reliability
 
-### Data Security Architecture
+### Security Implementation
 
 ```mermaid
 graph TB
     subgraph "Frontend Security"
-        CSP[Content Security Policy]
-        HTTPS[HTTPS Enforcement]
-        InputSanitization[Input Sanitization]
+        ContentSecurityPolicy[Content Security Policy]
+        HTTPSEnforcement[HTTPS Enforcement]
+        InputValidation[Input Validation & Sanitization]
         XSSProtection[XSS Protection]
     end
     
     subgraph "API Security"
         RateLimiting[Rate Limiting]
-        APIKeyManagement[API Key Management]
         CORSConfiguration[CORS Configuration]
         RequestValidation[Request Validation]
+        ErrorHandling[Secure Error Handling]
     end
     
     subgraph "Data Protection"
-        NoSensitiveData[No Sensitive Data Storage]
-        PublicAPIUsage[Public API Usage Only]
-        ClientSideOnly[Client-side Processing]
+        NoSensitiveStorage[No Sensitive Data Storage]
+        PublicAPIOnly[Public API Usage Only]
         TransparentOperations[Transparent Operations]
+        ClientSideProcessing[Client-side Processing]
     end
     
-    CSP --> RateLimiting
-    HTTPS --> APIKeyManagement
-    InputSanitization --> CORSConfiguration
-    XSSProtection --> RequestValidation
+    ContentSecurityPolicy --> RateLimiting
+    HTTPSEnforcement --> CORSConfiguration
+    InputValidation --> RequestValidation
+    XSSProtection --> ErrorHandling
     
-    RateLimiting --> NoSensitiveData
-    APIKeyManagement --> PublicAPIUsage
-    CORSConfiguration --> ClientSideOnly
+    RateLimiting --> NoSensitiveStorage
+    CORSConfiguration --> PublicAPIOnly
     RequestValidation --> TransparentOperations
+    ErrorHandling --> ClientSideProcessing
 ```
 
-This architecture ensures Picotop delivers enterprise-grade reliability while maintaining the innovative, user-friendly experience that defines the Odyssey ecosystem. The platform is designed to scale with user growth while continuously improving prediction accuracy through advanced analytics and machine learning integration.
+## 🎯 Technical Specifications
+
+### Technology Stack
+
+- **Framework**: Next.js 15 with App Router
+- **Language**: TypeScript 5.0+
+- **Styling**: Tailwind CSS 3.4+ with CSS Variables
+- **Charts**: Recharts 2.8+ with custom components
+- **Animations**: Framer Motion 11+
+- **State Management**: React Query (TanStack Query)
+- **Theme System**: next-themes with system detection
+- **Deployment**: Vercel with Edge Functions
+- **Package Manager**: Yarn 1.22+
+
+### API Integration
+
+- **Bitcoin Data**: BGeo Metrics API (primary), CoinGecko API, Coinpaprika API
+- **On-chain Metrics**: BGeo Metrics for NUPL, SOPR, MVRV, and Bitcoin dominance
+- **App Store Data**: App Store Connect API, Google Play Console API
+- **Market Sentiment**: Fear & Greed Index API
+- **Real-time Updates**: 30-second polling intervals
+- **Caching Strategy**: React Query with 5-minute cache TTL
+- **Error Handling**: Graceful fallbacks and retry logic
+
+This architecture ensures Picojeet delivers enterprise-grade reliability while maintaining an innovative, user-friendly experience. The platform is designed to scale with user growth while continuously improving prediction accuracy through advanced analytics and real-time data integration.

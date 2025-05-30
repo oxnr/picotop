@@ -12,8 +12,15 @@ const nunito = Nunito({
 });
 
 export const metadata: Metadata = {
-  title: "Picojeet - Sell the Pico Top",
-  description: "Degen Bitcoin cycle prediction platform. Time your jeets perfectly with real-time cycle analysis, ALT season timing, and advanced on-chain metrics.",
+  title: "Picojeet - Bitcoin Cycle Analysis",
+  description: "Advanced Bitcoin cycle prediction platform. Time the market perfectly with real-time cycle analysis, ALT season timing, and comprehensive on-chain metrics.",
+  icons: {
+    icon: [
+      { url: '/icon.svg', type: 'image/svg+xml' },
+      { url: '/favicon.ico', sizes: 'any' }
+    ],
+    apple: '/icon.svg',
+  },
 };
 
 export default function RootLayout({

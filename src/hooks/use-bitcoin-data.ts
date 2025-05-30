@@ -18,6 +18,7 @@ interface BitcoinResponse {
       coingecko: boolean
       coinpaprika: boolean
       feargreed: boolean
+      bgeometrics: boolean
     }
     sources: {
       price: string
@@ -33,23 +34,36 @@ export function useBitcoinData() {
   return useQuery<BitcoinResponse>({
     queryKey: ['bitcoin-data'],
     queryFn: async () => {
-      const response = await fetch('/api/bitcoin')
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 45000) // 45 second timeout
       
-      if (!response.ok) {
-        throw new Error('Failed to fetch Bitcoin data')
+      try {
+        const response = await fetch('/api/bitcoin', {
+          signal: controller.signal,
+        })
+        
+        clearTimeout(timeoutId)
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch Bitcoin data')
+        }
+        
+        const result: BitcoinResponse = await response.json()
+        
+        if (!result.success) {
+          throw new Error('Failed to fetch Bitcoin data')
+        }
+        
+        return result
+      } catch (error) {
+        clearTimeout(timeoutId)
+        throw error
       }
-      
-      const result: BitcoinResponse = await response.json()
-      
-      if (!result.success) {
-        throw new Error('Failed to fetch Bitcoin data')
-      }
-      
-      return result
     },
-    refetchInterval: 30000, // Faster refetch for real-time data
-    staleTime: 15000, // More aggressive stale time for fresher data
-    retry: 3, // Retry failed requests
-    retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
+    refetchInterval: 60000, // Reduced from 30s to 60s to prevent server overload
+    staleTime: 45000, // Consider data stale after 45 seconds
+    retry: 2, // Reduced retries
+    retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 10000), // Shorter max delay
+    gcTime: 300000, // Keep in cache for 5 minutes
   })
 }

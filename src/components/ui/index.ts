@@ -3,3 +3,5 @@ export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent }
 export { BrrrVideo } from "./brrr-video"
 export { DataStatus } from "./data-status"
 export { PicojeetLogo, PicojeetWordmark } from "./picojeet-logo"
+export { OdysseyBanner } from "./odyssey-banner"
+export { MiniChart } from "./mini-chart"

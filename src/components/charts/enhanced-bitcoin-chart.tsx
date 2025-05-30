@@ -6,89 +6,191 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 interface EnhancedBitcoinChartProps {
   data?: any[]
   currentPrice?: number
+  targetPrice?: number
 }
 
-export function EnhancedBitcoinChart({ data, currentPrice = 108700 }: EnhancedBitcoinChartProps) {
+export function EnhancedBitcoinChart({ data, currentPrice = 108700, targetPrice }: EnhancedBitcoinChartProps) {
   // Generate realistic monthly Bitcoin price data with predictions
   const generateCompleteData = () => {
     const now = Date.now()
+    const currentDate = new Date()
+    const currentYear = currentDate.getFullYear()
+    const currentMonth = currentDate.getMonth() + 1 // 1-12
     const oneMonth = 30 * 24 * 60 * 60 * 1000
     
-    // Historical data (corrected actual prices)
+    // Bitcoin price high values extracted from provided CoinMarketCap data
     const historicalPrices = [
-      { month: 59, price: 16540, isPrediction: false }, // Jan 2020
-      { month: 58, price: 9600, isPrediction: false },  // Feb 2020  
-      { month: 57, price: 5800, isPrediction: false },  // Mar 2020 - COVID crash
-      { month: 56, price: 7770, isPrediction: false },  // Apr 2020
-      { month: 55, price: 8800, isPrediction: false },  // May 2020
-      { month: 54, price: 9100, isPrediction: false },  // Jun 2020
-      { month: 53, price: 11200, isPrediction: false }, // Jul 2020
-      { month: 52, price: 11700, isPrediction: false }, // Aug 2020
-      { month: 51, price: 10800, isPrediction: false }, // Sep 2020
-      { month: 50, price: 13780, isPrediction: false }, // Oct 2020
-      { month: 49, price: 19700, isPrediction: false }, // Nov 2020
-      { month: 48, price: 28900, isPrediction: false }, // Dec 2020 - Institutional buying
-      { month: 47, price: 29000, isPrediction: false }, // Jan 2021
-      { month: 46, price: 45000, isPrediction: false }, // Feb 2021
-      { month: 45, price: 58900, isPrediction: false }, // Mar 2021
-      { month: 44, price: 65000, isPrediction: false }, // Apr 2021 - First peak
-      { month: 43, price: 35000, isPrediction: false }, // May 2021 - China ban crash
-      { month: 42, price: 34500, isPrediction: false }, // Jun 2021
-      { month: 41, price: 41000, isPrediction: false }, // Jul 2021
-      { month: 40, price: 47000, isPrediction: false }, // Aug 2021
-      { month: 39, price: 43800, isPrediction: false }, // Sep 2021
-      { month: 38, price: 61000, isPrediction: false }, // Oct 2021 - Recovery
-      { month: 37, price: 69000, isPrediction: false }, // Nov 2021 - ATH
-      { month: 36, price: 46200, isPrediction: false }, // Dec 2021
-      { month: 35, price: 38000, isPrediction: false }, // Jan 2022
-      { month: 34, price: 38500, isPrediction: false }, // Feb 2022
-      { month: 33, price: 45000, isPrediction: false }, // Mar 2022
-      { month: 32, price: 38000, isPrediction: false }, // Apr 2022
-      { month: 31, price: 29600, isPrediction: false }, // May 2022 - LUNA crash
-      { month: 30, price: 20000, isPrediction: false }, // Jun 2022 - Bear market
-      { month: 29, price: 23300, isPrediction: false }, // Jul 2022
-      { month: 28, price: 23000, isPrediction: false }, // Aug 2022
-      { month: 27, price: 19400, isPrediction: false }, // Sep 2022
-      { month: 26, price: 20400, isPrediction: false }, // Oct 2022
-      { month: 25, price: 15700, isPrediction: false }, // Nov 2022 - FTX collapse
-      { month: 24, price: 16500, isPrediction: false }, // Dec 2022
-      { month: 23, price: 23100, isPrediction: false }, // Jan 2023
-      { month: 22, price: 24200, isPrediction: false }, // Feb 2023
-      { month: 21, price: 27000, isPrediction: false }, // Mar 2023 - Banking crisis
-      { month: 20, price: 29200, isPrediction: false }, // Apr 2023
-      { month: 19, price: 27000, isPrediction: false }, // May 2023
-      { month: 18, price: 30000, isPrediction: false }, // Jun 2023
-      { month: 17, price: 29200, isPrediction: false }, // Jul 2023
-      { month: 16, price: 29100, isPrediction: false }, // Aug 2023
-      { month: 15, price: 26900, isPrediction: false }, // Sep 2023
-      { month: 14, price: 34500, isPrediction: false }, // Oct 2023 - ETF hype
-      { month: 13, price: 37000, isPrediction: false }, // Nov 2023
-      { month: 12, price: 42200, isPrediction: false }, // Dec 2023
-      { month: 11, price: 42800, isPrediction: false }, // Jan 2024
-      { month: 10, price: 51500, isPrediction: false }, // Feb 2024 - ETF approval
-      { month: 9, price: 71000, isPrediction: false },  // Mar 2024 - New ATH
-      { month: 8, price: 64000, isPrediction: false },  // Apr 2024
-      { month: 7, price: 67500, isPrediction: false },  // May 2024
-      { month: 6, price: 61000, isPrediction: false },  // Jun 2024
-      { month: 5, price: 66500, isPrediction: false },  // Jul 2024
-      { month: 4, price: 59800, isPrediction: false },  // Aug 2024
-      { month: 3, price: 63000, isPrediction: false },  // Sep 2024
-      { month: 2, price: 69000, isPrediction: false },  // Oct 2024
-      { month: 1, price: 91500, isPrediction: false },  // Nov 2024 - Election pump
-      { month: 0, price: 108700, isPrediction: false }, // Dec 2024 - Current
+      // 2013 data (starting from April 2013)
+      { month: 144, price: 147.49, isPrediction: false },  // Apr 2013
+      { month: 143, price: 139.89, isPrediction: false },  // May 2013 
+      { month: 142, price: 129.78, isPrediction: false },  // Jun 2013
+      { month: 141, price: 111.34, isPrediction: false },  // Jul 2013
+      { month: 140, price: 140.89, isPrediction: false },  // Aug 2013
+      { month: 139, price: 146.50, isPrediction: false },  // Sep 2013
+      { month: 138, price: 217.42, isPrediction: false },  // Oct 2013
+      { month: 137, price: 1156.14, isPrediction: false }, // Nov 2013 - First major rally
+      { month: 136, price: 1156.12, isPrediction: false }, // Dec 2013
+      // 2014 data
+      { month: 135, price: 1017.12, isPrediction: false }, // Jan 2014
+      { month: 134, price: 853.52, isPrediction: false },  // Feb 2014
+      { month: 133, price: 702.91, isPrediction: false },  // Mar 2014
+      { month: 132, price: 542.38, isPrediction: false },  // Apr 2014
+      { month: 131, price: 624.72, isPrediction: false },  // May 2014
+      { month: 130, price: 674.11, isPrediction: false },  // Jun 2014
+      { month: 129, price: 657.86, isPrediction: false },  // Jul 2014
+      { month: 128, price: 598.12, isPrediction: false },  // Aug 2014
+      { month: 127, price: 493.93, isPrediction: false },  // Sep 2014
+      { month: 126, price: 411.70, isPrediction: false },  // Oct 2014
+      { month: 125, price: 457.09, isPrediction: false },  // Nov 2014
+      { month: 124, price: 384.04, isPrediction: false },  // Dec 2014
+      // 2015 data
+      { month: 123, price: 320.43, isPrediction: false },  // Jan 2015
+      { month: 122, price: 265.61, isPrediction: false },  // Feb 2015
+      { month: 121, price: 300.04, isPrediction: false },  // Mar 2015
+      { month: 120, price: 261.80, isPrediction: false },  // Apr 2015
+      { month: 119, price: 247.80, isPrediction: false },  // May 2015
+      { month: 118, price: 267.87, isPrediction: false },  // Jun 2015
+      { month: 117, price: 314.39, isPrediction: false },  // Jul 2015
+      { month: 116, price: 285.71, isPrediction: false },  // Aug 2015
+      { month: 115, price: 259.18, isPrediction: false },  // Sep 2015
+      { month: 114, price: 334.17, isPrediction: false },  // Oct 2015
+      { month: 113, price: 495.56, isPrediction: false },  // Nov 2015
+      { month: 112, price: 469.10, isPrediction: false },  // Dec 2015
+      // 2016 data
+      { month: 111, price: 462.93, isPrediction: false },  // Jan 2016
+      { month: 110, price: 448.05, isPrediction: false },  // Feb 2016
+      { month: 109, price: 439.65, isPrediction: false },  // Mar 2016
+      { month: 108, price: 467.96, isPrediction: false },  // Apr 2016
+      { month: 107, price: 553.96, isPrediction: false },  // May 2016
+      { month: 106, price: 777.99, isPrediction: false },  // Jun 2016
+      { month: 105, price: 704.97, isPrediction: false },  // Jul 2016
+      { month: 104, price: 626.12, isPrediction: false },  // Aug 2016
+      { month: 103, price: 628.82, isPrediction: false },  // Sep 2016
+      { month: 102, price: 720.40, isPrediction: false },  // Oct 2016
+      { month: 101, price: 756.24, isPrediction: false },  // Nov 2016
+      { month: 100, price: 979.40, isPrediction: false },  // Dec 2016
+      // 2017 data
+      { month: 99, price: 1191.10, isPrediction: false },  // Jan 2017
+      { month: 98, price: 1200.39, isPrediction: false },  // Feb 2017
+      { month: 97, price: 1280.31, isPrediction: false },  // Mar 2017
+      { month: 96, price: 1347.91, isPrediction: false },  // Apr 2017
+      { month: 95, price: 2763.71, isPrediction: false },  // May 2017
+      { month: 94, price: 2999.91, isPrediction: false },  // Jun 2017
+      { month: 93, price: 2916.14, isPrediction: false },  // Jul 2017
+      { month: 92, price: 4736.05, isPrediction: false },  // Aug 2017
+      { month: 91, price: 4975.04, isPrediction: false },  // Sep 2017
+      { month: 90, price: 6470.43, isPrediction: false },  // Oct 2017
+      { month: 89, price: 11517.40, isPrediction: false }, // Nov 2017
+      { month: 88, price: 20089.00, isPrediction: false }, // Dec 2017 - First major peak
+      // 2018 data
+      { month: 87, price: 17712.40, isPrediction: false }, // Jan 2018
+      { month: 86, price: 11958.50, isPrediction: false }, // Feb 2018
+      { month: 85, price: 11704.10, isPrediction: false }, // Mar 2018
+      { month: 84, price: 9745.32, isPrediction: false },  // Apr 2018
+      { month: 83, price: 9964.50, isPrediction: false },  // May 2018
+      { month: 82, price: 7754.89, isPrediction: false },  // Jun 2018
+      { month: 81, price: 8424.27, isPrediction: false },  // Jul 2018
+      { month: 80, price: 7769.04, isPrediction: false },  // Aug 2018
+      { month: 79, price: 7388.43, isPrediction: false },  // Sep 2018
+      { month: 78, price: 6965.06, isPrediction: false },  // Oct 2018
+      { month: 77, price: 6552.16, isPrediction: false },  // Nov 2018
+      { month: 76, price: 4309.38, isPrediction: false },  // Dec 2018
+      // 2019 data
+      { month: 75, price: 4109.02, isPrediction: false },  // Jan 2019
+      { month: 74, price: 4210.64, isPrediction: false },  // Feb 2019
+      { month: 73, price: 4296.81, isPrediction: false },  // Mar 2019
+      { month: 72, price: 5642.04, isPrediction: false },  // Apr 2019
+      { month: 71, price: 9008.31, isPrediction: false },  // May 2019
+      { month: 70, price: 13796.49, isPrediction: false }, // Jun 2019
+      { month: 69, price: 13129.53, isPrediction: false }, // Jul 2019
+      { month: 68, price: 12273.82, isPrediction: false }, // Aug 2019
+      { month: 67, price: 10898.76, isPrediction: false }, // Sep 2019
+      { month: 66, price: 10021.74, isPrediction: false }, // Oct 2019
+      { month: 65, price: 9505.05, isPrediction: false },  // Nov 2019
+      { month: 64, price: 7743.43, isPrediction: false },  // Dec 2019
+      // 2020 data
+      { month: 63, price: 9553.13, isPrediction: false },  // Jan 2020
+      { month: 62, price: 10457.63, isPrediction: false }, // Feb 2020
+      { month: 61, price: 9167.70, isPrediction: false },  // Mar 2020 - COVID crash
+      { month: 60, price: 9440.65, isPrediction: false },  // Apr 2020
+      { month: 59, price: 9996.74, isPrediction: false },  // May 2020
+      { month: 58, price: 10199.56, isPrediction: false }, // Jun 2020
+      { month: 57, price: 11415.86, isPrediction: false }, // Jul 2020
+      { month: 56, price: 13149.69, isPrediction: false }, // Aug 2020
+      { month: 55, price: 12059.87, isPrediction: false }, // Sep 2020
+      { month: 54, price: 14028.21, isPrediction: false }, // Oct 2020
+      { month: 53, price: 19749.26, isPrediction: false }, // Nov 2020
+      { month: 52, price: 29244.88, isPrediction: false }, // Dec 2020 - Institutional buying
+      // 2021 data
+      { month: 51, price: 41946.74, isPrediction: false }, // Jan 2021
+      { month: 50, price: 58330.57, isPrediction: false }, // Feb 2021
+      { month: 49, price: 61683.86, isPrediction: false }, // Mar 2021
+      { month: 48, price: 64863.10, isPrediction: false }, // Apr 2021
+      { month: 47, price: 59519.35, isPrediction: false }, // May 2021 - China ban crash
+      { month: 46, price: 41295.27, isPrediction: false }, // Jun 2021
+      { month: 45, price: 42235.55, isPrediction: false }, // Jul 2021
+      { month: 44, price: 50482.08, isPrediction: false }, // Aug 2021
+      { month: 43, price: 52853.76, isPrediction: false }, // Sep 2021
+      { month: 42, price: 66930.39, isPrediction: false }, // Oct 2021 - Recovery
+      { month: 41, price: 68789.63, isPrediction: false }, // Nov 2021 - ATH
+      { month: 40, price: 59041.69, isPrediction: false }, // Dec 2021
+      // 2022 data
+      { month: 39, price: 47881.41, isPrediction: false }, // Jan 2022
+      { month: 38, price: 45661.17, isPrediction: false }, // Feb 2022
+      { month: 37, price: 48086.84, isPrediction: false }, // Mar 2022
+      { month: 36, price: 47313.48, isPrediction: false }, // Apr 2022
+      { month: 35, price: 39902.95, isPrediction: false }, // May 2022 - LUNA crash
+      { month: 34, price: 31957.28, isPrediction: false }, // Jun 2022 - Bear market
+      { month: 33, price: 24572.58, isPrediction: false }, // Jul 2022
+      { month: 32, price: 25135.59, isPrediction: false }, // Aug 2022
+      { month: 31, price: 22673.82, isPrediction: false }, // Sep 2022
+      { month: 30, price: 20988.39, isPrediction: false }, // Oct 2022
+      { month: 29, price: 21446.89, isPrediction: false }, // Nov 2022 - FTX collapse
+      { month: 28, price: 18318.53, isPrediction: false }, // Dec 2022
+      // 2023 data
+      { month: 27, price: 23919.89, isPrediction: false }, // Jan 2023
+      { month: 26, price: 25134.12, isPrediction: false }, // Feb 2023
+      { month: 25, price: 29159.90, isPrediction: false }, // Mar 2023 - Banking crisis
+      { month: 24, price: 31005.61, isPrediction: false }, // Apr 2023
+      { month: 23, price: 29820.13, isPrediction: false }, // May 2023
+      { month: 22, price: 31389.54, isPrediction: false }, // Jun 2023
+      { month: 21, price: 31814.51, isPrediction: false }, // Jul 2023
+      { month: 20, price: 30176.80, isPrediction: false }, // Aug 2023
+      { month: 19, price: 27488.76, isPrediction: false }, // Sep 2023
+      { month: 18, price: 35150.43, isPrediction: false }, // Oct 2023 - ETF hype
+      { month: 17, price: 38415.34, isPrediction: false }, // Nov 2023
+      { month: 16, price: 44705.52, isPrediction: false }, // Dec 2023
+      // 2024 data
+      { month: 15, price: 48969.37, isPrediction: false }, // Jan 2024
+      { month: 14, price: 63913.13, isPrediction: false }, // Feb 2024 - ETF approval
+      { month: 13, price: 73750.07, isPrediction: false }, // Mar 2024 - New ATH
+      { month: 12, price: 72715.36, isPrediction: false }, // Apr 2024 - Halving
+      { month: 11, price: 71946.46, isPrediction: false }, // May 2024
+      { month: 10, price: 71907.85, isPrediction: false }, // Jun 2024
+      { month: 9, price: 69987.54, isPrediction: false },  // Jul 2024
+      { month: 8, price: 65593.24, isPrediction: false },  // Aug 2024
+      { month: 7, price: 66480.69, isPrediction: false },  // Sep 2024
+      { month: 6, price: 73577.21, isPrediction: false },  // Oct 2024
+      { month: 5, price: 99655.50, isPrediction: false },  // Nov 2024 - Election pump
+      { month: 4, price: 108268.45, isPrediction: false }, // Dec 2024
+      { month: 3, price: 109114.88, isPrediction: false }, // Jan 2025
+      { month: 2, price: 102755.73, isPrediction: false }, // Feb 2025
+      { month: 1, price: 95043.44, isPrediction: false },  // Mar 2025
+      { month: 0, price: 95768.39, isPrediction: false },  // Apr 2025 (high)
+      { month: -1, price: currentPrice, isPrediction: false }, // May 2025 (current)
     ]
     
     // Generate predictions for next 1.5 years (18 months) based on cycle analysis
     const futurePredictions = []
     let currentPricePoint = currentPrice
     
-    // Prediction algorithm based on cycle patterns and Pi Cycle Top (Sep 2025)
+    // Prediction algorithm based on cycle patterns and dynamic target price
     const monthsAhead = 18
-    const peakMonth = 6 // September 2025 (6 months from now)
-    const peakPrice = 185000 // Based on Pi Cycle prediction
+    const peakMonth = 6 // Estimated 6 months from now based on cycle analysis
+    const peakPrice = targetPrice || currentPrice * 1.25 // Use dynamic target price
     
     for (let i = 0; i < monthsAhead; i++) {
-      const monthsFromNow = i + 1
+      const monthsFromNow = i + 2  // Start from June (month -2)
       let predictedPrice
       
       if (monthsFromNow <= peakMonth) {
@@ -125,7 +227,7 @@ export function EnhancedBitcoinChart({ data, currentPrice = 108700 }: EnhancedBi
       predictedPrice = Math.max(30000, Math.min(300000, predictedPrice))
       
       futurePredictions.push({
-        month: -monthsFromNow, // Negative for future months
+        month: -monthsFromNow, // Start from -2 (June 2025)
         price: Math.round(predictedPrice),
         isPrediction: true
       })
@@ -134,20 +236,188 @@ export function EnhancedBitcoinChart({ data, currentPrice = 108700 }: EnhancedBi
     // Combine historical and predictions
     const allData = [...historicalPrices, ...futurePredictions]
     
+    // Create explicit date mapping for historical data to ensure accuracy
+    const monthYearMap = {
+      144: { year: 2013, month: 4 },  // Apr 2013
+      143: { year: 2013, month: 5 },  // May 2013
+      142: { year: 2013, month: 6 },  // Jun 2013
+      141: { year: 2013, month: 7 },  // Jul 2013
+      140: { year: 2013, month: 8 },  // Aug 2013
+      139: { year: 2013, month: 9 },  // Sep 2013
+      138: { year: 2013, month: 10 }, // Oct 2013
+      137: { year: 2013, month: 11 }, // Nov 2013
+      136: { year: 2013, month: 12 }, // Dec 2013
+      135: { year: 2014, month: 1 },  // Jan 2014
+      134: { year: 2014, month: 2 },  // Feb 2014
+      133: { year: 2014, month: 3 },  // Mar 2014
+      132: { year: 2014, month: 4 },  // Apr 2014
+      131: { year: 2014, month: 5 },  // May 2014
+      130: { year: 2014, month: 6 },  // Jun 2014
+      129: { year: 2014, month: 7 },  // Jul 2014
+      128: { year: 2014, month: 8 },  // Aug 2014
+      127: { year: 2014, month: 9 },  // Sep 2014
+      126: { year: 2014, month: 10 }, // Oct 2014
+      125: { year: 2014, month: 11 }, // Nov 2014
+      124: { year: 2014, month: 12 }, // Dec 2014
+      123: { year: 2015, month: 1 },  // Jan 2015
+      122: { year: 2015, month: 2 },  // Feb 2015
+      121: { year: 2015, month: 3 },  // Mar 2015
+      120: { year: 2015, month: 4 },  // Apr 2015
+      119: { year: 2015, month: 5 },  // May 2015
+      118: { year: 2015, month: 6 },  // Jun 2015
+      117: { year: 2015, month: 7 },  // Jul 2015
+      116: { year: 2015, month: 8 },  // Aug 2015
+      115: { year: 2015, month: 9 },  // Sep 2015
+      114: { year: 2015, month: 10 }, // Oct 2015
+      113: { year: 2015, month: 11 }, // Nov 2015
+      112: { year: 2015, month: 12 }, // Dec 2015
+      111: { year: 2016, month: 1 },  // Jan 2016
+      110: { year: 2016, month: 2 },  // Feb 2016
+      109: { year: 2016, month: 3 },  // Mar 2016
+      108: { year: 2016, month: 4 },  // Apr 2016
+      107: { year: 2016, month: 5 },  // May 2016
+      106: { year: 2016, month: 6 },  // Jun 2016
+      105: { year: 2016, month: 7 },  // Jul 2016
+      104: { year: 2016, month: 8 },  // Aug 2016
+      103: { year: 2016, month: 9 },  // Sep 2016
+      102: { year: 2016, month: 10 }, // Oct 2016
+      101: { year: 2016, month: 11 }, // Nov 2016
+      100: { year: 2016, month: 12 }, // Dec 2016
+      99: { year: 2017, month: 1 },   // Jan 2017
+      98: { year: 2017, month: 2 },   // Feb 2017
+      97: { year: 2017, month: 3 },   // Mar 2017
+      96: { year: 2017, month: 4 },   // Apr 2017
+      95: { year: 2017, month: 5 },   // May 2017
+      94: { year: 2017, month: 6 },   // Jun 2017
+      93: { year: 2017, month: 7 },   // Jul 2017
+      92: { year: 2017, month: 8 },   // Aug 2017
+      91: { year: 2017, month: 9 },   // Sep 2017
+      90: { year: 2017, month: 10 },  // Oct 2017
+      89: { year: 2017, month: 11 },  // Nov 2017
+      88: { year: 2017, month: 12 },  // Dec 2017
+      87: { year: 2018, month: 1 },   // Jan 2018
+      86: { year: 2018, month: 2 },   // Feb 2018
+      85: { year: 2018, month: 3 },   // Mar 2018
+      84: { year: 2018, month: 4 },   // Apr 2018
+      83: { year: 2018, month: 5 },   // May 2018
+      82: { year: 2018, month: 6 },   // Jun 2018
+      81: { year: 2018, month: 7 },   // Jul 2018
+      80: { year: 2018, month: 8 },   // Aug 2018
+      79: { year: 2018, month: 9 },   // Sep 2018
+      78: { year: 2018, month: 10 },  // Oct 2018
+      77: { year: 2018, month: 11 },  // Nov 2018
+      76: { year: 2018, month: 12 },  // Dec 2018
+      75: { year: 2019, month: 1 },   // Jan 2019
+      74: { year: 2019, month: 2 },   // Feb 2019
+      73: { year: 2019, month: 3 },   // Mar 2019
+      72: { year: 2019, month: 4 },   // Apr 2019
+      71: { year: 2019, month: 5 },   // May 2019
+      70: { year: 2019, month: 6 },   // Jun 2019
+      69: { year: 2019, month: 7 },   // Jul 2019
+      68: { year: 2019, month: 8 },   // Aug 2019
+      67: { year: 2019, month: 9 },   // Sep 2019
+      66: { year: 2019, month: 10 },  // Oct 2019
+      65: { year: 2019, month: 11 },  // Nov 2019
+      64: { year: 2019, month: 12 },  // Dec 2019
+      63: { year: 2020, month: 1 },   // Jan 2020
+      62: { year: 2020, month: 2 },   // Feb 2020
+      61: { year: 2020, month: 3 },   // Mar 2020
+      60: { year: 2020, month: 4 },   // Apr 2020
+      59: { year: 2020, month: 5 },   // May 2020
+      58: { year: 2020, month: 6 },   // Jun 2020
+      57: { year: 2020, month: 7 },   // Jul 2020
+      56: { year: 2020, month: 8 },   // Aug 2020
+      55: { year: 2020, month: 9 },   // Sep 2020
+      54: { year: 2020, month: 10 },  // Oct 2020
+      53: { year: 2020, month: 11 },  // Nov 2020
+      52: { year: 2020, month: 12 },  // Dec 2020
+      51: { year: 2021, month: 1 },   // Jan 2021
+      50: { year: 2021, month: 2 },   // Feb 2021
+      49: { year: 2021, month: 3 },   // Mar 2021
+      48: { year: 2021, month: 4 },   // Apr 2021
+      47: { year: 2021, month: 5 },   // May 2021
+      46: { year: 2021, month: 6 },   // Jun 2021
+      45: { year: 2021, month: 7 },   // Jul 2021
+      44: { year: 2021, month: 8 },   // Aug 2021
+      43: { year: 2021, month: 9 },   // Sep 2021
+      42: { year: 2021, month: 10 },  // Oct 2021
+      41: { year: 2021, month: 11 },  // Nov 2021
+      40: { year: 2021, month: 12 },  // Dec 2021
+      39: { year: 2022, month: 1 },   // Jan 2022
+      38: { year: 2022, month: 2 },   // Feb 2022
+      37: { year: 2022, month: 3 },   // Mar 2022
+      36: { year: 2022, month: 4 },   // Apr 2022
+      35: { year: 2022, month: 5 },   // May 2022
+      34: { year: 2022, month: 6 },   // Jun 2022
+      33: { year: 2022, month: 7 },   // Jul 2022
+      32: { year: 2022, month: 8 },   // Aug 2022
+      31: { year: 2022, month: 9 },   // Sep 2022
+      30: { year: 2022, month: 10 },  // Oct 2022
+      29: { year: 2022, month: 11 },  // Nov 2022
+      28: { year: 2022, month: 12 },  // Dec 2022
+      27: { year: 2023, month: 1 },   // Jan 2023
+      26: { year: 2023, month: 2 },   // Feb 2023
+      25: { year: 2023, month: 3 },   // Mar 2023
+      24: { year: 2023, month: 4 },   // Apr 2023
+      23: { year: 2023, month: 5 },   // May 2023
+      22: { year: 2023, month: 6 },   // Jun 2023
+      21: { year: 2023, month: 7 },   // Jul 2023
+      20: { year: 2023, month: 8 },   // Aug 2023
+      19: { year: 2023, month: 9 },   // Sep 2023
+      18: { year: 2023, month: 10 },  // Oct 2023
+      17: { year: 2023, month: 11 },  // Nov 2023
+      16: { year: 2023, month: 12 },  // Dec 2023
+      15: { year: 2024, month: 1 },   // Jan 2024
+      14: { year: 2024, month: 2 },   // Feb 2024
+      13: { year: 2024, month: 3 },   // Mar 2024
+      12: { year: 2024, month: 4 },   // Apr 2024
+      11: { year: 2024, month: 5 },   // May 2024
+      10: { year: 2024, month: 6 },   // Jun 2024
+      9: { year: 2024, month: 7 },    // Jul 2024
+      8: { year: 2024, month: 8 },    // Aug 2024
+      7: { year: 2024, month: 9 },    // Sep 2024
+      6: { year: 2024, month: 10 },   // Oct 2024
+      5: { year: 2024, month: 11 },   // Nov 2024
+      4: { year: 2024, month: 12 },   // Dec 2024
+      3: { year: 2025, month: 1 },    // Jan 2025
+      2: { year: 2025, month: 2 },    // Feb 2025
+      1: { year: 2025, month: 3 },    // Mar 2025
+      0: { year: 2025, month: 4 },    // Apr 2025
+      [-1]: { year: currentYear, month: currentMonth }  // Current month (dynamic)
+    }
+
     return allData.map((item, i) => {
-      const timestamp = item.month >= 0 
-        ? now - item.month * oneMonth  // Historical (0 = current month, 59 = 59 months ago)
-        : now + (Math.abs(item.month)) * oneMonth // Future (negative months)
-      const date = new Date(timestamp)
+      let timestamp, date
+      
+      if (item.isPrediction) {
+        // Future predictions use calculated dates from current month
+        const currentDate = new Date()
+        const monthOffset = Math.abs(item.month) // Direct offset since predictions start from -2
+        date = new Date(currentDate.getFullYear(), currentDate.getMonth() + monthOffset, 1)
+        timestamp = date.getTime()
+      } else {
+        // Historical and current data uses explicit date mapping
+        const dateInfo = monthYearMap[item.month]
+        if (dateInfo) {
+          date = new Date(dateInfo.year, dateInfo.month - 1, 1) // Month is 0-indexed
+          timestamp = date.getTime()
+        } else {
+          // Fallback for current price
+          timestamp = now
+          date = new Date(timestamp)
+        }
+      }
       
       return {
         date: `${date.toLocaleDateString('en-US', { month: 'short' })}\n'${String(date.getFullYear()).slice(-2)}`,
         monthYear: `${date.toLocaleDateString('en-US', { month: 'short' })} '${String(date.getFullYear()).slice(-2)}`,
         price: item.price,
         predictionPrice: item.isPrediction ? item.price : null,
-        historicalPrice: !item.isPrediction ? item.price : null,
+        historicalPrice: !item.isPrediction && item.month !== -1 ? item.price : null,
+        currentPrice: item.month === -1 ? item.price : null,
         timestamp,
-        isPrediction: item.isPrediction
+        isPrediction: item.isPrediction,
+        isCurrent: item.month === -1 && !item.isPrediction
       }
     }).sort((a, b) => a.timestamp - b.timestamp) // Sort by timestamp
   }
@@ -161,7 +431,7 @@ export function EnhancedBitcoinChart({ data, currentPrice = 108700 }: EnhancedBi
   // Create combined data for continuous line
   const combinedData = chartData.map(item => ({
     ...item,
-    price: item.historicalPrice || item.predictionPrice
+    price: item.historicalPrice || item.currentPrice || item.predictionPrice
   }))
 
   console.log('Enhanced Bitcoin Chart:', {
@@ -175,12 +445,20 @@ export function EnhancedBitcoinChart({ data, currentPrice = 108700 }: EnhancedBi
     const parts = payload.value.split('\n')
     const month = parts[0] || ''
     const year = parts[1] || ''
+    const fullLabel = `${month} ${year}`
     
     return (
       <g transform={`translate(${x},${y})`}>
-        <text x={0} y={0} dy={0} textAnchor="middle" fill="#a1a0a0" fontSize="11">
-          <tspan x="0" dy="0">{month}</tspan>
-          <tspan x="0" dy="12">{year}</tspan>
+        <text 
+          x={0} 
+          y={0} 
+          dy={12} 
+          textAnchor="middle" 
+          fill="#a1a0a0" 
+          fontSize="10"
+          transform="rotate(-45)"
+        >
+          {fullLabel}
         </text>
       </g>
     )
@@ -190,16 +468,22 @@ export function EnhancedBitcoinChart({ data, currentPrice = 108700 }: EnhancedBi
     if (active && payload && payload.length) {
       const data = payload[0].payload
       const isForcast = data.isPrediction
+      const isCurrent = data.isCurrent
       
       return (
         <div className="bg-card border border-border rounded-lg p-3 shadow-lg">
           <p className="text-foreground font-medium">{data.monthYear}</p>
-          <p className={isForcast ? "text-orange-400" : "text-primary"}>
-            {isForcast ? 'Predicted' : 'Price'}: <span className="font-bold">${payload[0].value.toLocaleString()}</span>
+          <p className={isForcast ? "text-orange-400" : isCurrent ? "text-purple-400" : "text-primary"}>
+            {isForcast ? 'Predicted' : isCurrent ? 'Current' : 'Price'}: <span className="font-bold">${payload[0].value.toLocaleString()}</span>
           </p>
           {isForcast && (
             <p className="text-xs text-muted-foreground mt-1">
               ⚠️ Prediction based on cycle analysis
+            </p>
+          )}
+          {isCurrent && (
+            <p className="text-xs text-muted-foreground mt-1">
+              📍 Live price data
             </p>
           )}
         </div>
@@ -211,7 +495,7 @@ export function EnhancedBitcoinChart({ data, currentPrice = 108700 }: EnhancedBi
   return (
     <div className="w-full h-full relative">
       <ResponsiveContainer width="100%" height="100%">
-        <LineChart data={combinedData} margin={{ top: 20, right: 30, left: 20, bottom: 50 }}>
+        <LineChart data={combinedData} margin={{ top: 20, right: 80, left: 20, bottom: 40 }}>
           <defs>
             <linearGradient id="historicalGradient" x1="0" y1="0" x2="1" y2="0">
               <stop offset="0%" stopColor="#2f49d0" />
@@ -231,12 +515,12 @@ export function EnhancedBitcoinChart({ data, currentPrice = 108700 }: EnhancedBi
           />
           
           <XAxis 
-            dataKey="date" 
+            dataKey="monthYear" 
             axisLine={false}
             tickLine={false}
-            tick={<CustomTick />}
-            height={50}
-            interval="preserveStartEnd"
+            tick={{ fill: '#a1a0a0', fontSize: 10, angle: -45, textAnchor: 'end' }}
+            height={80}
+            interval={6}
           />
           
           <YAxis 
@@ -258,18 +542,25 @@ export function EnhancedBitcoinChart({ data, currentPrice = 108700 }: EnhancedBi
             y={currentPrice} 
             stroke="#22c55e" 
             strokeDasharray="2 2" 
-            strokeWidth={1}
-            label={{ value: "Current", position: "right", fill: "#22c55e", fontSize: 12 }}
+            strokeWidth={2}
           />
           
-          {/* Pi Cycle Top prediction line */}
-          <ReferenceLine 
-            y={185000} 
-            stroke="#ef4444" 
-            strokeDasharray="2 2" 
-            strokeWidth={1}
-            label={{ value: "Pi Cycle Top", position: "right", fill: "#ef4444", fontSize: 12, offset: 10 }}
-          />
+          {/* Cycle Target prediction line */}
+          {targetPrice && (
+            <ReferenceLine 
+              y={targetPrice} 
+              stroke="#ef4444" 
+              strokeDasharray="2 2" 
+              strokeWidth={1}
+              label={{ 
+                value: "Cycle Target", 
+                position: "insideTopRight", 
+                fill: "#ef4444", 
+                fontSize: 12,
+                offset: -60
+              }}
+            />
+          )}
           
           {/* Historical price line - solid */}
           <Line
@@ -293,24 +584,20 @@ export function EnhancedBitcoinChart({ data, currentPrice = 108700 }: EnhancedBi
             activeDot={{ r: 6, stroke: '#f97316', strokeWidth: 2, fill: '#fff' }}
             connectNulls={false}
           />
+          
+          {/* Current price point - purple dot */}
+          <Line
+            type="monotone"
+            dataKey="currentPrice"
+            stroke="#8e76ef"
+            strokeWidth={0}
+            dot={{ r: 8, stroke: '#8e76ef', strokeWidth: 3, fill: '#fff' }}
+            activeDot={{ r: 10, stroke: '#8e76ef', strokeWidth: 3, fill: '#fff' }}
+            connectNulls={false}
+          />
         </LineChart>
       </ResponsiveContainer>
       
-      {/* Legend - moved inside chart area */}
-      <div className="absolute bottom-4 left-4 flex items-center space-x-4 text-xs bg-card/80 backdrop-blur-sm rounded-lg p-2 border border-border">
-        <div className="flex items-center space-x-1">
-          <div className="w-3 h-0.5 bg-gradient-to-r from-blue-500 to-purple-500"></div>
-          <span className="text-muted-foreground">Historical</span>
-        </div>
-        <div className="flex items-center space-x-1">
-          <div className="w-3 h-0.5 bg-gradient-to-r from-orange-500 to-yellow-500" style={{ borderTop: '1px dashed' }}></div>
-          <span className="text-muted-foreground">Prediction</span>
-        </div>
-        <div className="flex items-center space-x-1">
-          <div className="w-2 h-0.5 bg-green-500 opacity-70"></div>
-          <span className="text-muted-foreground">${currentPrice.toLocaleString()}</span>
-        </div>
-      </div>
     </div>
   )
 }

@@ -1,0 +1,39 @@
+<svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#8b5cf6" stop-opacity="0.1"></stop>
+      <stop offset="100%" stop-color="#f97316" stop-opacity="0.05"></stop>
+    </linearGradient>
+    <linearGradient id="chartGradient" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#8b5cf6"></stop>
+      <stop offset="50%" stop-color="#f97316"></stop>
+      <stop offset="100%" stop-color="#22c55e"></stop>
+    </linearGradient>
+  </defs>
+  
+  <path 
+    d="M 6 32 L 10 28 L 12 30 L 16 24 L 18 26 L 22 18 L 24 20 L 28 10 L 30 12 L 34 22 L 36 28" 
+    stroke="url(#chartGradient)" 
+    stroke-width="2.5" 
+    stroke-linecap="round" 
+    stroke-linejoin="round" 
+    fill="none" 
+  />
+  
+  <g>
+    <circle cx="28" cy="10" r="6" fill="black" opacity="0.1" transform="translate(0.5, 0.5)"></circle>
+    <circle cx="28" cy="10" r="6" fill="#ef4b89"></circle>
+    <circle cx="28" cy="10" r="5.2" fill="none" stroke="#8b5cf6" stroke-width="0.7" opacity="0.7"></circle>
+    <text 
+      x="28" 
+      y="13" 
+      text-anchor="middle" 
+      font-size="8" 
+      font-weight="600" 
+      fill="white" 
+      font-family="Outfit, sans-serif"
+    >
+      S
+    </text>
+  </g>
+</svg>

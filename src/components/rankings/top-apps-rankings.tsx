@@ -77,7 +77,7 @@ function AppRow({ app, index }: { app: TopAppData; index: number }) {
       
       {/* Change */}
       <div className="text-right w-12">
-        {app.categoryChange24h !== 0 && (
+        {app.categoryChange24h !== 0 && !isNaN(app.categoryChange24h) && (
           <div className={`flex items-center justify-end space-x-1 text-xs ${getChangeColor(app.categoryChange24h)}`}>
             {getChangeIcon(app.categoryChange24h)}
             <span>{Math.abs(app.categoryChange24h)}</span>

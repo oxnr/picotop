@@ -1,4 +1,4 @@
-import { BitcoinMetrics, ActionSignal } from '../api/bitcoin'
+import type { BitcoinMetrics } from '../api/bitcoin.ts'
 
 export interface CyclePrediction {
   timeToTop: string // e.g., "3-6 months"
@@ -16,141 +16,209 @@ export function predictCycleTiming(
 ): CyclePrediction {
   const { nupl, sopr, mvrv, fearGreedIndex } = metrics
   
-  // Calculate composite cycle score (0-100)
-  const nuplScore = nupl * 100 // 0-100
-  const soprScore = Math.max(0, Math.min(100, (sopr - 0.8) * 250)) // normalize 0.8-1.2 to 0-100
-  const mvrvScore = Math.max(0, Math.min(100, (mvrv / 5) * 100)) // normalize 0-5 to 0-100
-  const fearScore = fearGreedIndex // already 0-100
-  const domScore = Math.max(0, Math.min(100, ((70 - dominance) / 40) * 100)) // Higher when dominance drops
+  // Calculate months since last halving (April 19, 2024)
+  const lastHalving = new Date('2024-04-19')
+  const now = new Date()
+  const monthsSinceHalving = Math.floor((now.getTime() - lastHalving.getTime()) / (1000 * 60 * 60 * 24 * 30.44))
   
-  const compositeScore = (nuplScore * 0.3 + soprScore * 0.25 + mvrvScore * 0.25 + fearScore * 0.15 + domScore * 0.05)
+  // Dynamic cycle progression based on halving timing and metrics
+  // Historical cycles: Peak typically 12-18 months post-halving
+  const cycleProgressionRatio = monthsSinceHalving / 15 // Target 15 months as typical peak timing
   
-  // Determine cycle phase
+  // Advanced metric analysis with dynamic thresholds
+  const cycleAdjustedNuplThreshold = 0.45 + (cycleProgressionRatio * 0.25) // Rising threshold over time
+  const cycleAdjustedMvrvThreshold = 1.8 + (cycleProgressionRatio * 1.0) // Rising threshold over time
+  
+  // Weighted composite score with cycle timing consideration
+  let cyclePosition = 0
+  let reasoning: string[] = []
+  
+  // NUPL Analysis (30% weight)
+  if (nupl < 0.2) {
+    cyclePosition += 0 * 0.3
+    reasoning.push(`NUPL at ${nupl.toFixed(2)} indicates capitulation/hope phase`)
+  } else if (nupl < cycleAdjustedNuplThreshold) {
+    cyclePosition += 25 * 0.3
+    reasoning.push(`NUPL at ${nupl.toFixed(2)} shows early optimism phase`)
+  } else if (nupl < 0.65) {
+    cyclePosition += 55 * 0.3
+    reasoning.push(`NUPL at ${nupl.toFixed(2)} indicates belief/optimism phase`)
+  } else if (nupl < 0.8) {
+    cyclePosition += 80 * 0.3
+    reasoning.push(`NUPL at ${nupl.toFixed(2)} approaching euphoria territory`)
+  } else {
+    cyclePosition += 95 * 0.3
+    reasoning.push(`NUPL at ${nupl.toFixed(2)} in extreme euphoria - peak imminent`)
+  }
+  
+  // MVRV Analysis (25% weight)
+  if (mvrv < 1.0) {
+    cyclePosition += 0 * 0.25
+  } else if (mvrv < cycleAdjustedMvrvThreshold) {
+    cyclePosition += 30 * 0.25
+  } else if (mvrv < 3.2) {
+    cyclePosition += 60 * 0.25
+    reasoning.push(`MVRV at ${mvrv.toFixed(1)} shows healthy growth but approaching caution zone`)
+  } else if (mvrv < 4.5) {
+    cyclePosition += 85 * 0.25
+    reasoning.push(`MVRV at ${mvrv.toFixed(1)} in historical sell zone`)
+  } else {
+    cyclePosition += 95 * 0.25
+    reasoning.push(`MVRV at ${mvrv.toFixed(1)} at extreme levels - major correction risk`)
+  }
+  
+  // Price Level Analysis (20% weight) - considering $100K+ levels
+  const priceScore = currentPrice > 120000 ? 90 : 
+                    currentPrice > 100000 ? 70 :
+                    currentPrice > 80000 ? 50 :
+                    currentPrice > 60000 ? 30 : 10
+  cyclePosition += priceScore * 0.2
+  
+  if (currentPrice > 100000) {
+    reasoning.push(`Price at $${(currentPrice/1000).toFixed(0)}K in uncharted territory`)
+  }
+  
+  // Halving Cycle Timing (15% weight) - More aggressive for late cycle
+  const halvingScore = monthsSinceHalving < 6 ? 15 :
+                      monthsSinceHalving < 9 ? 35 :
+                      monthsSinceHalving < 12 ? 65 :
+                      monthsSinceHalving < 15 ? 85 :
+                      monthsSinceHalving < 18 ? 95 : 98
+  cyclePosition += halvingScore * 0.15
+  reasoning.push(`${monthsSinceHalving} months post-halving (April 2024)`)
+  
+  // Fear & Greed and Dominance (10% weight combined)
+  const sentimentScore = (fearGreedIndex / 100) * 50 + ((70 - dominance) / 30) * 50
+  cyclePosition += Math.min(100, sentimentScore) * 0.1
+  
+  // CRITICAL REALITY CHECK: If 12+ months post-halving AND price >$100K, force advanced position
+  if (monthsSinceHalving >= 12 && currentPrice > 100000) {
+    cyclePosition = Math.max(cyclePosition, 65) // Minimum Mid-Late Bull
+    reasoning.push('Market maturity forces advanced cycle position')
+  }
+  
+  // Additional boost for being in historical peak window (12-18 months)
+  if (monthsSinceHalving >= 12 && monthsSinceHalving <= 18) {
+    cyclePosition = Math.min(100, cyclePosition + 10) // Boost by 10 points
+    reasoning.push('In historical peak window (12-18mo post-halving)')
+  }
+  
+  // Determine phase and timing based on dynamic cycle position
   let phase: CyclePrediction['currentCyclePhase']
   let timeToTop: string
   let confidence: number
   let targetPrice: number
   let riskLevel: CyclePrediction['riskLevel']
-  let reasoning: string[] = []
   
-  if (compositeScore < 20) {
+  // Adjusted phase determination for more realistic timeframes
+  if (cyclePosition < 30) {
     phase = 'Deep Bear'
-    timeToTop = '12-24 months'
-    confidence = 85
-    targetPrice = currentPrice * 3.5
-    riskLevel = 'Low'
-    reasoning = [
-      'All metrics indicate deep bear market conditions',
-      'Excellent accumulation opportunity',
-      'Historical cycles suggest 12-24 months to next peak'
-    ]
-  } else if (compositeScore < 40) {
-    phase = 'Early Bear'
-    timeToTop = '6-18 months'
-    confidence = 75
-    targetPrice = currentPrice * 2.5
-    riskLevel = 'Low'
-    reasoning = [
-      'Bear market conditions with early recovery signs',
-      'Good time to start accumulating',
-      'Cycle typically extends 6-18 months from here'
-    ]
-  } else if (compositeScore < 55) {
-    phase = 'Early Bull'
-    timeToTop = '6-12 months'
-    confidence = 70
-    targetPrice = currentPrice * 1.8
-    riskLevel = 'Medium'
-    reasoning = [
-      'Early bull market phase confirmed',
-      'Strong momentum building',
-      'Peak likely in 6-12 months based on current trajectory'
-    ]
-  } else if (compositeScore < 70) {
-    phase = 'Mid Bull'
-    timeToTop = '3-9 months'
-    confidence = 65
-    targetPrice = currentPrice * 1.4
-    riskLevel = 'Medium'
-    reasoning = [
-      'Mid-cycle bull market conditions',
-      'Some metrics approaching elevated levels',
-      'Peak expected within 3-9 months'
-    ]
-  } else if (compositeScore < 85) {
-    phase = 'Late Bull'
-    timeToTop = '1-6 months'
+    timeToTop = '12-18 months'
     confidence = 80
-    targetPrice = currentPrice * 1.2
+    targetPrice = currentPrice * 2.8
+    riskLevel = 'Low'
+  } else if (cyclePosition < 50) {
+    phase = 'Early Bull'
+    timeToTop = '6-9 months'
+    confidence = 75
+    targetPrice = currentPrice * 1.9
+    riskLevel = 'Low'
+  } else if (cyclePosition < 70) {
+    phase = 'Mid Bull'
+    timeToTop = '3-6 months'
+    confidence = 70
+    targetPrice = currentPrice * 1.5
+    riskLevel = 'Medium'
+  } else if (cyclePosition < 85) {
+    phase = 'Late Bull'
+    timeToTop = '1-4 months'
+    confidence = 75
+    targetPrice = currentPrice * 1.25
     riskLevel = 'High'
-    reasoning = [
-      'Late-stage bull market indicators present',
-      'Multiple metrics in distribution zones',
-      'Cycle top likely within 1-6 months'
-    ]
   } else {
     phase = 'Peak'
-    timeToTop = '0-3 months'
-    confidence = 90
+    timeToTop = '0-2 months'
+    confidence = 85
     targetPrice = currentPrice * 1.1
     riskLevel = 'Extreme'
-    reasoning = [
-      'Peak cycle conditions detected',
-      'All major metrics in euphoria/sell zones',
-      'Immediate distribution recommended'
-    ]
   }
   
-  // Adjust for specific metric readings
+  // Additional adjustments based on specific conditions
+  if (monthsSinceHalving >= 8 && cyclePosition > 50) {
+    // We're in the expected peak window, adjust accordingly
+    if (phase === 'Mid Bull') {
+      phase = 'Late Bull'
+      timeToTop = '3-6 months'
+      reasoning.push('Historical patterns suggest transition to late bull phase')
+    }
+  }
+  
+  // Confidence adjustments based on metric alignment
+  if (nupl > 0.6 && mvrv > 2.5 && fearGreedIndex > 70) {
+    confidence = Math.min(90, confidence + 10)
+    reasoning.push('Multiple metrics aligned - high confidence in timing')
+  }
+  
+  // Advanced metric-specific adjustments
   if (nupl > 0.75) {
-    reasoning.push(`NUPL at ${nupl.toFixed(2)} indicates euphoria phase`)
     confidence = Math.min(95, confidence + 10)
+    if (phase !== 'Peak') {
+      phase = 'Peak'
+      timeToTop = '0-2 months'
+      riskLevel = 'Extreme'
+    }
   }
   
-  if (mvrv > 3.5) {
-    reasoning.push(`MVRV Z-Score at ${mvrv} suggests significant overvaluation`)
+  if (mvrv > 4.0) {
     confidence = Math.min(95, confidence + 8)
+    riskLevel = 'Extreme'
+    reasoning.push('MVRV in extreme historical sell zone')
   }
   
-  if (fearGreedIndex > 80) {
-    reasoning.push(`Fear & Greed at ${fearGreedIndex} shows extreme greed`)
+  if (fearGreedIndex > 85) {
+    reasoning.push(`Extreme greed at ${fearGreedIndex} - contrarian signal`)
     confidence = Math.min(95, confidence + 5)
   }
   
   if (dominance < 45) {
-    reasoning.push(`BTC dominance at ${dominance.toFixed(1)}% suggests altcoin euphoria`)
-    timeToTop = adjustTimeframe(timeToTop, -0.2) // Shorten timeframe
+    reasoning.push(`BTC dominance at ${dominance.toFixed(1)}% - altcoin season risk`)
+    // Adjust timeframe downward for alt euphoria
+    if (timeToTop.includes('4-8')) timeToTop = '3-6 months'
+    if (timeToTop.includes('2-5')) timeToTop = '1-3 months'
   }
   
-  // Current price context (at $108K+)
-  if (currentPrice > 100000) {
-    reasoning.push(`Price above $100K entering psychological resistance zone`)
+  // SOPR analysis for short-term timing
+  if (sopr > 1.05 && cyclePosition > 65) {
+    reasoning.push(`SOPR at ${sopr.toFixed(3)} shows profit-taking acceleration`)
     confidence = Math.min(95, confidence + 5)
-    riskLevel = riskLevel === 'Low' ? 'Medium' : riskLevel === 'Medium' ? 'High' : 'Extreme'
+  }
+  
+  // Final reality check based on current market conditions
+  if (monthsSinceHalving >= 8 && currentPrice > 100000) {
+    // We're definitively in mid-to-late bull market territory
+    if (cyclePosition < 55) cyclePosition = 55 // Floor the position
+    
+    if (phase === 'Early Bull') phase = 'Mid Bull'
+    if (phase === 'Mid Bull' && cyclePosition > 70) {
+      phase = 'Late Bull'
+      timeToTop = '3-6 months'
+    }
+    
+    reasoning.push('Market maturity suggests advanced cycle position')
   }
   
   return {
     timeToTop,
-    confidence,
+    confidence: Math.round(confidence),
     targetPrice: Math.round(targetPrice),
     currentCyclePhase: phase,
     riskLevel,
-    reasoning
+    reasoning: reasoning.slice(0, 5) // Limit to top 5 most relevant reasons
   }
 }
 
-function adjustTimeframe(timeframe: string, factor: number): string {
-  // Simple timeframe adjustment logic
-  if (factor < 0) {
-    // Shorten timeframes
-    if (timeframe.includes('12-24')) return '6-18 months'
-    if (timeframe.includes('6-18')) return '3-12 months'
-    if (timeframe.includes('6-12')) return '3-9 months'
-    if (timeframe.includes('3-9')) return '1-6 months'
-    if (timeframe.includes('1-6')) return '0-3 months'
-  }
-  return timeframe
-}
+// Note: Dynamic cycle prediction now uses real-time halving data and metric analysis
+// No static timeframe adjustments needed as all calculations are contextual
 
 export function getCycleHealthScore(metrics: BitcoinMetrics, dominance: number): {
   score: number
@@ -159,42 +227,76 @@ export function getCycleHealthScore(metrics: BitcoinMetrics, dominance: number):
 } {
   const { nupl, sopr, mvrv, fearGreedIndex } = metrics
   
-  // Health scoring (lower is healthier for longevity)
-  let healthScore = 0
+  // Calculate months since halving for dynamic thresholds
+  const lastHalving = new Date('2024-04-19')
+  const monthsSinceHalving = Math.floor((Date.now() - lastHalving.getTime()) / (1000 * 60 * 60 * 24 * 30.44))
   
-  // NUPL contribution (0-40 points)
-  healthScore += nupl * 40
+  // Dynamic health assessment based on cycle progression
+  let riskPoints = 0
+  let maxRiskPoints = 100
   
-  // SOPR contribution (0-25 points)
-  healthScore += Math.max(0, (sopr - 0.8) / 0.4) * 25
+  // NUPL risk assessment (30 points max)
+  const nuplRiskThreshold = 0.45 + (monthsSinceHalving / 15) * 0.25
+  if (nupl > 0.8) riskPoints += 30
+  else if (nupl > 0.7) riskPoints += 25
+  else if (nupl > nuplRiskThreshold) riskPoints += 15
+  else if (nupl > 0.4) riskPoints += 8
+  else riskPoints += 2
   
-  // MVRV contribution (0-25 points)  
-  healthScore += Math.min(25, (mvrv / 5) * 25)
+  // MVRV risk assessment (25 points max)
+  const mvrvRiskThreshold = 2.0 + (monthsSinceHalving / 15) * 1.5
+  if (mvrv > 4.5) riskPoints += 25
+  else if (mvrv > 3.5) riskPoints += 20
+  else if (mvrv > mvrvRiskThreshold) riskPoints += 12
+  else if (mvrv > 1.5) riskPoints += 6
+  else riskPoints += 1
   
-  // Fear & Greed contribution (0-10 points)
-  healthScore += (fearGreedIndex / 100) * 10
+  // Price momentum risk (20 points max)
+  if (sopr > 1.08) riskPoints += 20
+  else if (sopr > 1.05) riskPoints += 15
+  else if (sopr > 1.02) riskPoints += 8
+  else if (sopr > 1.0) riskPoints += 4
+  else riskPoints += 10 // Being below 1.0 is also risky (selling at loss)
   
-  const finalScore = 100 - healthScore // Invert so higher is better
+  // Sentiment extremes (15 points max)
+  if (fearGreedIndex > 85) riskPoints += 15
+  else if (fearGreedIndex > 75) riskPoints += 10
+  else if (fearGreedIndex > 65) riskPoints += 6
+  else if (fearGreedIndex < 25) riskPoints += 12 // Extreme fear also risky
+  else riskPoints += 2
+  
+  // Dominance risk (10 points max)
+  if (dominance < 40) riskPoints += 10 // Alt euphoria
+  else if (dominance < 45) riskPoints += 6
+  else if (dominance > 65) riskPoints += 8 // Alt capitulation
+  else riskPoints += 1
+  
+  // Time-based risk adjustment
+  if (monthsSinceHalving >= 12) {
+    riskPoints += 5 // Additional risk for being in typical peak window
+  }
+  
+  const healthScore = Math.max(0, Math.min(100, 100 - riskPoints))
   
   let status: 'Healthy' | 'Cautious' | 'Warning' | 'Critical'
   let description: string
   
-  if (finalScore >= 70) {
+  if (healthScore >= 75) {
     status = 'Healthy'
-    description = 'Market conditions are sustainable for continued growth'
-  } else if (finalScore >= 50) {
+    description = 'Market conditions support continued growth with manageable risk'
+  } else if (healthScore >= 55) {
     status = 'Cautious'
-    description = 'Some metrics elevated but still within reasonable ranges'
-  } else if (finalScore >= 30) {
+    description = 'Some risk factors present - maintain position but monitor closely'
+  } else if (healthScore >= 35) {
     status = 'Warning'
-    description = 'Multiple indicators suggest caution and risk management'
+    description = 'Multiple warning signs - consider reducing exposure and taking profits'
   } else {
     status = 'Critical'
-    description = 'Extreme readings across metrics - high probability of reversal'
+    description = 'High-risk environment - significant correction probability elevated'
   }
   
   return {
-    score: Math.round(finalScore),
+    score: Math.round(healthScore),
     status,
     description
   }

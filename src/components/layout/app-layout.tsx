@@ -2,6 +2,7 @@
 
 import { Header } from './header'
 import { Footer } from './footer'
+import { OdysseyBanner } from '@/components/ui'
 
 interface AppLayoutProps {
   children: React.ReactNode
@@ -24,6 +25,9 @@ interface AppLayoutProps {
 export function AppLayout({ children, footerProps }: AppLayoutProps) {
   return (
     <div className="min-h-screen bg-background flex flex-col">
+      {/* Odyssey Banner */}
+      <OdysseyBanner />
+      
       {/* Header */}
       <Header />
 

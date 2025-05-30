@@ -103,6 +103,7 @@ export interface DashboardMetric {
   icon?: string
   color?: string
   trend?: ChartData[]
+  historicalData?: Array<{ date: Date; value: number }>
 }
 
 export interface DashboardState {

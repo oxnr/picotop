@@ -32,7 +32,7 @@ export async function GET() {
         sources: {
           price: 'Enhanced multi-source',
           dominance: 'Enhanced multi-source',
-          metrics: 'Enhanced with real Fear & Greed',
+          metrics: 'BGeometrics + Fear & Greed API',
           fearGreed: metrics.fearGreedIndex
         }
       },

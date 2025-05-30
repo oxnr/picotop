@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { motion } from 'framer-motion'
-import { DataStatus } from '@/components/ui'
+import { DataStatus, PicojeetWordmark } from '@/components/ui'
 import { Heart, ArrowSquareOut } from '@phosphor-icons/react'
 
 interface FooterProps {
@@ -80,7 +80,7 @@ export function Footer({ apiHealth, lastUpdated, sources }: FooterProps) {
           {/* Project Info */}
           <div className="space-y-4">
             <div>
-              <h4 className="text-sm font-semibold text-foreground mb-2">Picojeet</h4>
+              <PicojeetWordmark className="mb-3" />
               <p className="text-xs text-muted-foreground">
                 Real-time Bitcoin cycle prediction platform for timing your perfect jeets.
               </p>

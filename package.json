@@ -1,9 +1,10 @@
 {
-  "name": "cycletop",
+  "name": "picojeet",
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "NODE_OPTIONS='--max-old-space-size=4096' next dev --turbopack",
+    "dev:stable": "NODE_OPTIONS='--max-old-space-size=4096' next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",

@@ -23,78 +23,61 @@ export function PicojeetLogo({
     ? {
         primary: 'currentColor',
         secondary: 'currentColor', 
-        accent: 'currentColor'
+        accent: 'currentColor',
+        sell: 'currentColor'
       }
     : {
         primary: '#8b5cf6', // Purple primary
         secondary: '#f97316', // Orange accent
-        accent: '#22c55e'     // Green for gains
+        accent: '#22c55e',    // Green for gains
+        sell: '#ef4444'       // Red for sell indicator
       }
 
   return (
     <div className={`${sizes[size]} ${className}`}>
-      <svg
-        viewBox="0 0 40 40"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
+      <svg 
+        viewBox="0 0 40 40" 
+        fill="none" 
+        xmlns="http://www.w3.org/2000/svg" 
         className="w-full h-full"
       >
-        {/* Background circle with gradient */}
         <defs>
           <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor={colors.primary} stopOpacity="0.1" />
-            <stop offset="100%" stopColor={colors.secondary} stopOpacity="0.2" />
+            <stop offset="0%" stopColor="#8b5cf6" stopOpacity="0.1" />
+            <stop offset="100%" stopColor="#f97316" stopOpacity="0.05" />
           </linearGradient>
-          <linearGradient id="pGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor={colors.primary} />
-            <stop offset="50%" stopColor={colors.secondary} />
-            <stop offset="100%" stopColor={colors.accent} />
+          <linearGradient id="chartGradient" x1="0%" y1="100%" x2="0%" y2="0%">
+            <stop offset="0%" stopColor="#8b5cf6" />
+            <stop offset="50%" stopColor="#f97316" />
+            <stop offset="100%" stopColor="#22c55e" />
           </linearGradient>
         </defs>
         
-        {/* Background circle */}
-        <circle 
-          cx="20" 
-          cy="20" 
-          r="18" 
-          fill="url(#bgGradient)" 
-          stroke={colors.primary}
-          strokeWidth="2"
-          opacity="0.8"
+        <path 
+          d="M 6 32 L 10 28 L 12 30 L 16 24 L 18 26 L 22 18 L 24 20 L 28 10 L 30 12 L 34 22 L 36 28" 
+          stroke="url(#chartGradient)" 
+          strokeWidth="2.5" 
+          strokeLinecap="round" 
+          strokeLinejoin="round" 
+          fill="none" 
         />
         
-        {/* Main P letter - bold and angular for degen vibes */}
-        <path
-          d="M12 10 L12 30 M12 10 L25 10 Q28 10 28 15 Q28 20 25 20 L12 20"
-          stroke="url(#pGradient)"
-          strokeWidth="3"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          fill="none"
-        />
-        
-        {/* Degen chart line going up (for gains) */}
-        <path
-          d="M28 25 L30 23 L32 21 L34 18 L36 15"
-          stroke={colors.accent}
-          strokeWidth="2.5"
-          strokeLinecap="round"
-          opacity="0.9"
-        />
-        
-        {/* Small dots for data points */}
-        <circle cx="30" cy="23" r="1" fill={colors.accent} />
-        <circle cx="34" cy="18" r="1" fill={colors.accent} />
-        <circle cx="36" cy="15" r="1" fill={colors.accent} />
-        
-        {/* Subtle jeet arrow (down trend) */}
-        <path
-          d="M8 15 L6 17 L4 19"
-          stroke={colors.secondary}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          opacity="0.6"
-        />
+        <g>
+          <circle cx="28" cy="10" r="6" fill="black" opacity="0.1" transform="translate(0.5, 0.5)" />
+          <circle cx="28" cy="10" r="6" fill="#ef4b89" />
+          <circle cx="28" cy="10" r="5.2" fill="none" stroke="#8b5cf6" strokeWidth="0.7" opacity="0.7" />
+          <text 
+            x="28" 
+            y="13" 
+            textAnchor="middle" 
+            fontSize="8" 
+            fontWeight="600" 
+            fill="white" 
+            fontFamily="Outfit, sans-serif"
+          >
+            S
+          </text>
+        </g>
       </svg>
     </div>
   )
