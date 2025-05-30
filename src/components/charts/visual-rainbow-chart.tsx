@@ -32,13 +32,13 @@ const historicalRainbowData = [
 ]
 
 const rainbowBands = [
-  { name: 'Red', color: '#ff0000', range: '$0 - $30K', signal: 'FIRE SALE', description: 'Historic bottoms, maximum accumulation' },
-  { name: 'Orange', color: '#ff8000', range: '$30K - $45K', signal: 'BUY', description: 'Bear market recovery, accumulate aggressively' },
-  { name: 'Yellow', color: '#ffff00', range: '$45K - $65K', signal: 'ACCUMULATE', description: 'Early bull market, still undervalued' },
-  { name: 'Green', color: '#00ff00', range: '$65K - $85K', signal: 'HOLD', description: 'Fair value range, healthy bull market' },
-  { name: 'Blue', color: '#0080ff', range: '$85K - $105K', signal: 'DISTRIBUTE', description: 'Approaching overvaluation, take some profits' },
-  { name: 'Indigo', color: '#8000ff', range: '$105K - $150K', signal: 'SELL', description: 'Late cycle, major distribution zone' },
-  { name: 'Violet', color: '#ff00ff', range: '$150K+', signal: 'PANIC SELL', description: 'Extreme euphoria, cycle top imminent' },
+  { name: 'Violet', color: '#ff00ff', range: '$0 - $30K', signal: 'PANIC SELL', description: 'Historic bottoms, maximum accumulation' },
+  { name: 'Indigo', color: '#8000ff', range: '$30K - $45K', signal: 'BUY', description: 'Bear market recovery, accumulate aggressively' },
+  { name: 'Blue', color: '#0080ff', range: '$45K - $65K', signal: 'HOLD', description: 'Early bull market, still undervalued' },
+  { name: 'Green', color: '#00ff00', range: '$65K - $85K', signal: 'ACCUMULATE', description: 'Fair value range, healthy bull market' },
+  { name: 'Yellow', color: '#ffff00', range: '$85K - $105K', signal: 'DISTRIBUTE', description: 'Approaching overvaluation, take some profits' },
+  { name: 'Orange', color: '#ff8000', range: '$105K - $150K', signal: 'SELL', description: 'Late cycle, major distribution zone' },
+  { name: 'Red', color: '#ff0000', range: '$150K+', signal: 'PANIC SELL', description: 'Extreme euphoria, cycle top imminent' },
 ]
 
 export function VisualRainbowChart({ currentPrice, rainbowBand }: VisualRainbowChartProps) {
@@ -82,48 +82,25 @@ export function VisualRainbowChart({ currentPrice, rainbowBand }: VisualRainbowC
   ]
 
   return (
-    <Card className="border-0 bg-card">
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <TrendUp className="h-5 w-5 text-purple-500" />
-            <CardTitle className="text-foreground">Bitcoin Rainbow Chart Analysis</CardTitle>
-          </div>
-          <div 
-            className={`px-3 py-1 rounded-full text-xs font-bold ${
-              getSignalStyle(currentBand.signal as any)?.bg || 'bg-gray-500/20'
-            } ${
-              getSignalStyle(currentBand.signal as any)?.text || 'text-gray-400'
-            } ${
-              getSignalStyle(currentBand.signal as any)?.border || 'border-gray-500/30'
-            } border`}
+    <div className="space-y-6">
+      {/* Time Period Selector */}
+      <div className="flex justify-end space-x-1">
+        {timePeriods.map((period) => (
+          <button
+            key={period.value}
+            onClick={() => setSelectedPeriod(period.value)}
+            className={`px-3 py-1 text-xs font-medium rounded transition-colors ${
+              selectedPeriod === period.value
+                ? 'bg-primary text-primary-foreground'
+                : 'bg-secondary/20 text-muted-foreground hover:bg-secondary/40'
+            }`}
           >
-            {currentBand.signal}
-          </div>
-        </div>
-        <div className="flex items-center justify-between">
-          <p className="text-sm text-muted-foreground">
-            Logarithmic price bands with cycle timing and ALT season correlation
-          </p>
-          <div className="flex space-x-1">
-            {timePeriods.map((period) => (
-              <button
-                key={period.value}
-                onClick={() => setSelectedPeriod(period.value)}
-                className={`px-3 py-1 text-xs font-medium rounded transition-colors ${
-                  selectedPeriod === period.value
-                    ? 'bg-primary text-primary-foreground'
-                    : 'bg-secondary/20 text-muted-foreground hover:bg-secondary/40'
-                }`}
-              >
-                {period.label}
-              </button>
-            ))}
-          </div>
-        </div>
-      </CardHeader>
+            {period.label}
+          </button>
+        ))}
+      </div>
       
-      <CardContent className="space-y-6">
+      <div className="space-y-6">
         {/* Current Status */}
         <div className="p-4 bg-secondary/10 rounded-lg border-l-4" style={{ borderColor: currentBand.color }}>
           <div className="flex items-center justify-between mb-2">
@@ -148,7 +125,7 @@ export function VisualRainbowChart({ currentPrice, rainbowBand }: VisualRainbowC
         {/* Historical Price Chart with Rainbow Bands */}
         <div className="h-80">
           <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={filteredData} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
+            <AreaChart data={filteredData} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
               <defs>
                 <linearGradient id="priceGradient" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor={currentBand.color} stopOpacity={0.3}/>
@@ -160,8 +137,23 @@ export function VisualRainbowChart({ currentPrice, rainbowBand }: VisualRainbowC
               <XAxis 
                 dataKey="date" 
                 stroke="#9CA3AF"
-                fontSize={12}
-                tick={{ fill: '#9CA3AF' }}
+                fontSize={10}
+                tick={{ fill: '#9CA3AF', textAnchor: 'end' }}
+                angle={-45}
+                height={80}
+                interval={Math.max(0, Math.floor(filteredData.length / 8))}
+                tickFormatter={(value) => {
+                  try {
+                    const [year, month] = value.split('-')
+                    const monthNames = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 
+                                      'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC']
+                    const monthName = monthNames[parseInt(month) - 1] || 'JAN'
+                    const shortYear = year.slice(-2)
+                    return `${monthName} ${shortYear}`
+                  } catch (error) {
+                    return value
+                  }
+                }}
               />
               <YAxis 
                 scale="log"
@@ -323,7 +315,7 @@ export function VisualRainbowChart({ currentPrice, rainbowBand }: VisualRainbowC
             </div>
           </div>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   )
 }

@@ -69,10 +69,10 @@ export function mockAppStoreRankings(): AppStoreRankings {
   ]
 
   return {
-    coinbase: generateMockRanking('Coinbase', 12, 8),
-    phantom: generateMockRanking('Phantom', 28, 35),
-    metamask: generateMockRanking('MetaMask', 45, 42),
-    trust: generateMockRanking('Trust Wallet', 18, 15),
+    coinbase: generateMockRanking('Coinbase', 24, 27),
+    phantom: generateMockRanking('Phantom', 42, 38),
+    metamask: generateMockRanking('MetaMask', 35, 31),
+    trust: generateMockRanking('Trust Wallet', 16, 19),
   }
 }
 
@@ -118,30 +118,49 @@ function calculateAppScore(categoryRank: number, globalRank: number, isCrypto: b
 // Mock top 20 app rankings with global and category data
 export function mockTop20Rankings(): TopAppsRankings {
   const generateTopApps = (platform: 'apple' | 'google'): TopAppData[] => {
-    const cryptoApps = [
-      { name: 'Coinbase', categoryRank: 3, globalRank: 45, icon: 'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/b8/6f/9d/b86f9d6f-6b0e-86d0-0e1f-7e5b68b3d88c/AppIcon-0-0-1x_U007emarketing-0-7-0-0-85-220.png/60x60bb.jpg', publisher: 'Coinbase Inc.' },
-      { name: 'Trust Wallet', categoryRank: 8, globalRank: 156, icon: 'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/f7/7c/ac/f77cacac-a8f0-4b8f-8b0e-6b0e-7e5b68b3d88c/AppIcon-0-0-1x_U007emarketing-0-7-0-0-85-220.png/60x60bb.jpg', publisher: 'Six Days LLC' },
-      { name: 'MetaMask', categoryRank: 12, globalRank: 203, icon: 'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/8e/76/ef/8e76ef6f-6b0e-86d0-0e1f-7e5b68b3d88c/AppIcon-0-0-1x_U007emarketing-0-7-0-0-85-220.png/60x60bb.jpg', publisher: 'ConsenSys' },
-      { name: 'Binance', categoryRank: 15, globalRank: 89, icon: 'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/f7/b9/1c/f7b91c6f-6b0e-86d0-0e1f-7e5b68b3d88c/AppIcon-0-0-1x_U007emarketing-0-7-0-0-85-220.png/60x60bb.jpg', publisher: 'Binance LTD' },
-      { name: 'Phantom', categoryRank: 18, globalRank: 334, icon: 'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/8e/76/ef/8e76ef6f-6b0e-86d0-0e1f-7e5b68b3d88c/AppIcon-0-0-1x_U007emarketing-0-7-0-0-85-220.png/60x60bb.jpg', publisher: 'Phantom Technologies' },
+    // Google Play specific rankings based on 2025 research data
+    const cryptoApps = platform === 'google' ? [
+      { name: 'Coinbase', categoryRank: 30, globalRank: 45, icon: '', publisher: 'Coinbase Inc.' },
+      { name: 'Trust Wallet', categoryRank: 45, globalRank: 156, icon: '', publisher: 'Six Days LLC' },
+      { name: 'MetaMask', categoryRank: 52, globalRank: 203, icon: '', publisher: 'ConsenSys' },
+      { name: 'Binance.US', categoryRank: 38, globalRank: 89, icon: '', publisher: 'BAM Trading Services' },
+      { name: 'Phantom', categoryRank: 2, globalRank: 334, icon: '', publisher: 'Phantom Technologies' }, // Ranked #2 on Google Play
+      { name: 'Kraken Pro', categoryRank: 67, globalRank: 412, icon: '', publisher: 'Payward Inc.' },
+    ] : [
+      // Apple App Store rankings
+      { name: 'Coinbase', categoryRank: 62, globalRank: 45, icon: '', publisher: 'Coinbase Inc.' },
+      { name: 'Trust Wallet', categoryRank: 28, globalRank: 156, icon: '', publisher: 'Six Days LLC' },
+      { name: 'MetaMask', categoryRank: 35, globalRank: 203, icon: '', publisher: 'ConsenSys' },
+      { name: 'Binance.US', categoryRank: 41, globalRank: 89, icon: '', publisher: 'BAM Trading Services' },
+      { name: 'Phantom', categoryRank: 24, globalRank: 334, icon: '', publisher: 'Phantom Technologies' },
+      { name: 'Kraken Pro', categoryRank: 58, globalRank: 412, icon: '', publisher: 'Payward Inc.' },
     ]
 
     const regularApps = [
-      { name: 'PayPal', categoryRank: 1, globalRank: 8, icon: 'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/2f/49/d0/2f49d06f-6b0e-86d0-0e1f-7e5b68b3d88c/AppIcon-0-0-1x_U007emarketing-0-7-0-0-85-220.png/60x60bb.jpg', publisher: 'PayPal Inc.' },
-      { name: 'Cash App', categoryRank: 2, globalRank: 23, icon: 'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/00/ff/00/00ff006f-6b0e-86d0-0e1f-7e5b68b3d88c/AppIcon-0-0-1x_U007emarketing-0-7-0-0-85-220.png/60x60bb.jpg', publisher: 'Block Inc.' },
-      { name: 'Venmo', categoryRank: 4, globalRank: 67, icon: 'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/00/80/ff/0080ff6f-6b0e-86d0-0e1f-7e5b68b3d88c/AppIcon-0-0-1x_U007emarketing-0-7-0-0-85-220.png/60x60bb.jpg', publisher: 'PayPal Inc.' },
-      { name: 'Wells Fargo Mobile', categoryRank: 5, globalRank: 123, icon: 'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/ff/00/00/ff00006f-6b0e-86d0-0e1f-7e5b68b3d88c/AppIcon-0-0-1x_U007emarketing-0-7-0-0-85-220.png/60x60bb.jpg', publisher: 'Wells Fargo' },
-      { name: 'Chase Mobile', categoryRank: 6, globalRank: 98, icon: 'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/00/00/ff/0000ff6f-6b0e-86d0-0e1f-7e5b68b3d88c/AppIcon-0-0-1x_U007emarketing-0-7-0-0-85-220.png/60x60bb.jpg', publisher: 'JPMorgan Chase' },
-      { name: 'Bank of America', categoryRank: 7, globalRank: 145, icon: 'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/80/00/ff/8000ff6f-6b0e-86d0-0e1f-7e5b68b3d88c/AppIcon-0-0-1x_U007emarketing-0-7-0-0-85-220.png/60x60bb.jpg', publisher: 'Bank of America' },
-      { name: 'Zelle', categoryRank: 9, globalRank: 234, icon: 'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/ff/ff/00/ffff006f-6b0e-86d0-0e1f-7e5b68b3d88c/AppIcon-0-0-1x_U007emarketing-0-7-0-0-85-220.png/60x60bb.jpg', publisher: 'Early Warning Services' },
-      { name: 'Credit Karma', categoryRank: 10, globalRank: 167, icon: 'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/ff/80/00/ff80006f-6b0e-86d0-0e1f-7e5b68b3d88c/AppIcon-0-0-1x_U007emarketing-0-7-0-0-85-220.png/60x60bb.jpg', publisher: 'Credit Karma Inc.' },
-      { name: 'Mint', categoryRank: 11, globalRank: 189, icon: 'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/00/ff/80/00ff806f-6b0e-86d0-0e1f-7e5b68b3d88c/AppIcon-0-0-1x_U007emarketing-0-7-0-0-85-220.png/60x60bb.jpg', publisher: 'Intuit Inc.' },
-      { name: 'Robinhood', categoryRank: 13, globalRank: 76, icon: 'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/ff/00/80/ff00806f-6b0e-86d0-0e1f-7e5b68b3d88c/AppIcon-0-0-1x_U007emarketing-0-7-0-0-85-220.png/60x60bb.jpg', publisher: 'Robinhood Markets' },
-      { name: 'Fidelity Investments', categoryRank: 14, globalRank: 245, icon: 'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/80/ff/00/80ff006f-6b0e-86d0-0e1f-7e5b68b3d88c/AppIcon-0-0-1x_U007emarketing-0-7-0-0-85-220.png/60x60bb.jpg', publisher: 'Fidelity' },
-      { name: 'E*TRADE', categoryRank: 16, globalRank: 289, icon: 'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/00/80/ff/0080ff6f-6b0e-86d0-0e1f-7e5b68b3d88c/AppIcon-0-0-1x_U007emarketing-0-7-0-0-85-220.png/60x60bb.jpg', publisher: 'Morgan Stanley' },
-      { name: 'Charles Schwab', categoryRank: 17, globalRank: 356, icon: 'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/80/00/ff/8000ff6f-6b0e-86d0-0e1f-7e5b68b3d88c/AppIcon-0-0-1x_U007emarketing-0-7-0-0-85-220.png/60x60bb.jpg', publisher: 'Charles Schwab' },
-      { name: 'TD Ameritrade', categoryRank: 19, globalRank: 445, icon: 'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/ff/80/80/ff80806f-6b0e-86d0-0e1f-7e5b68b3d88c/AppIcon-0-0-1x_U007emarketing-0-7-0-0-85-220.png/60x60bb.jpg', publisher: 'Charles Schwab' },
-      { name: 'SoFi', categoryRank: 20, globalRank: 267, icon: 'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/80/80/ff/8080ff6f-6b0e-86d0-0e1f-7e5b68b3d88c/AppIcon-0-0-1x_U007emarketing-0-7-0-0-85-220.png/60x60bb.jpg', publisher: 'SoFi Technologies' },
+      { name: 'Cash App', categoryRank: 1, globalRank: 23, icon: '', publisher: 'Block Inc.' }, // Leading app based on research
+      { name: 'Venmo', categoryRank: 2, globalRank: 67, icon: '', publisher: 'PayPal Inc.' }, // Strong #2 position
+      { name: 'PayPal', categoryRank: 3, globalRank: 8, icon: '', publisher: 'PayPal Inc.' }, // Top 3 based on research
+      { name: 'Wells Fargo Mobile', categoryRank: 4, globalRank: 123, icon: '', publisher: 'Wells Fargo' },
+      { name: 'Chase Mobile', categoryRank: 5, globalRank: 98, icon: '', publisher: 'JPMorgan Chase' },
+      { name: 'Bank of America', categoryRank: 6, globalRank: 145, icon: '', publisher: 'Bank of America' },
+      { name: 'Zelle', categoryRank: 7, globalRank: 234, icon: '', publisher: 'Early Warning Services' },
+      { name: 'Credit Karma', categoryRank: 8, globalRank: 167, icon: '', publisher: 'Credit Karma Inc.' },
+      { name: 'Mint', categoryRank: 9, globalRank: 189, icon: '', publisher: 'Intuit Inc.' },
+      { name: 'Robinhood', categoryRank: 10, globalRank: 76, icon: '', publisher: 'Robinhood Markets' },
+      { name: 'Fidelity Investments', categoryRank: 11, globalRank: 245, icon: '', publisher: 'Fidelity' },
+      { name: 'Capital One Mobile', categoryRank: 12, globalRank: 198, icon: '', publisher: 'Capital One' },
+      { name: 'E*TRADE', categoryRank: 13, globalRank: 289, icon: '', publisher: 'Morgan Stanley' },
+      { name: 'Charles Schwab', categoryRank: 14, globalRank: 356, icon: '', publisher: 'Charles Schwab' },
+      { name: 'Webull', categoryRank: 15, globalRank: 234, icon: '', publisher: 'Webull Corporation' },
+      { name: 'Chime', categoryRank: 16, globalRank: 178, icon: '', publisher: 'Chime Financial Inc.' },
+      { name: 'TD Ameritrade', categoryRank: 17, globalRank: 445, icon: '', publisher: 'Charles Schwab' },
+      { name: 'SoFi', categoryRank: 18, globalRank: 267, icon: '', publisher: 'SoFi Technologies' },
+      { name: 'Acorns', categoryRank: 19, globalRank: 398, icon: '', publisher: 'Acorns Grow Inc.' },
+      { name: 'USAA Mobile', categoryRank: 20, globalRank: 387, icon: '', publisher: 'USAA' },
+      { name: 'Ally Mobile', categoryRank: 21, globalRank: 523, icon: '', publisher: 'Ally Bank' },
+      { name: 'Stash', categoryRank: 22, globalRank: 456, icon: '', publisher: 'Stash101 Inc.' },
+      { name: 'PNC Mobile', categoryRank: 23, globalRank: 412, icon: '', publisher: 'PNC Bank' },
+      { name: 'Navy Federal CU', categoryRank: 25, globalRank: 567, icon: '', publisher: 'Navy Federal Credit Union' },
     ]
 
     const allApps = [...cryptoApps, ...regularApps]

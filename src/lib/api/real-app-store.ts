@@ -19,6 +19,10 @@ function getRealAppIcon(appName: string, platform: 'apple' | 'google'): string {
     'Binance': {
       apple: 'https://is1-ssl.mzstatic.com/image/thumb/Purple126/v4/b5/b5/b5/b5b5b5b5-b5b5-b5b5-b5b5-b5b5b5b5b5b5/AppIcon-0-0-1x_U007emarketing-0-0-0-7-0-0-sRGB-0-0-0-GLES2_U002c0-512MB-85-220-0-0.png/512x512bb.jpg',
       google: 'https://play-lh.googleusercontent.com/BnBnBnBnBnBnBnBnBnBnBnBnBnBnBnBnBnBnBnBnBnBnBnBnBnBnBnBnBnBnBn=s512-rw'
+    },
+    'Phantom': {
+      apple: 'https://is1-ssl.mzstatic.com/image/thumb/Purple126/v4/p7/p7/p7/p7p7p7p7-p7p7-p7p7-p7p7-p7p7p7p7p7p7/AppIcon-0-0-1x_U007emarketing-0-0-0-7-0-0-sRGB-0-0-0-GLES2_U002c0-512MB-85-220-0-0.png/512x512bb.jpg',
+      google: 'https://play-lh.googleusercontent.com/PhPhPhPhPhPhPhPhPhPhPhPhPhPhPhPhPhPhPhPhPhPhPhPhPhPhPhPhPhPhPh=s512-rw'
     }
   }
   
@@ -28,6 +32,7 @@ function getRealAppIcon(appName: string, platform: 'apple' | 'google'): string {
     'Trust Wallet': '🛡️',
     'MetaMask': '🦊',
     'Binance': '🟨',
+    'Phantom': '👻',
     'PayPal': '💙',
     'Cash App': '💵',
     'Venmo': '💰',

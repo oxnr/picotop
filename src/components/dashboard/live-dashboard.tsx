@@ -5,12 +5,12 @@ import { StatsCard } from '@/components/dashboard'
 import { EnhancedBitcoinChart, RainbowChart, MetricGauge, NUPLDetail, SOPRDetail, DominanceDetail, VisualNUPLChart, VisualRainbowChart, VisualSOPRChart, VisualMVRVChart, ComprehensiveMetrics, BTCDominanceChart } from '@/components/charts'
 import { TopAppsRankings } from '@/components/rankings'
 import { ActionSignalComponent } from '@/components/metrics'
-import { Card, CardContent, CardHeader, CardTitle, BrrrVideo, DataStatus } from '@/components/ui'
+import { Card, CardContent, CardHeader, CardTitle, DataStatus } from '@/components/ui'
 import { DashboardMetric } from '@/lib/types'
 import { getSignalStyle } from '@/lib/constants/signals'
 import { CurrencyBtc, TrendUp, ChartLine, Ranking, Warning, Clock, CircleNotch, Trophy, Target, Gauge } from '@phosphor-icons/react'
 import { motion } from 'framer-motion'
-import { useBitcoinData, useAppRankings, useTopApps, useScrollBrrr } from '@/hooks'
+import { useBitcoinData, useAppRankings, useTopApps } from '@/hooks'
 import { getAverageRanking } from '@/lib/api/real-app-store'
 import { predictCycleTiming, getCycleHealthScore } from '@/lib/analysis/cycle-predictor'
 import { 
@@ -25,27 +25,22 @@ import {
   generateRHODLHistory,
   generateCoinbaseRankHistory
 } from '@/lib/utils/historical-data'
-import { useState, useEffect } from 'react'
 
 export function LiveDashboard() {
   const { data: bitcoinResponse, isLoading: bitcoinLoading, error: bitcoinError } = useBitcoinData()
   const bitcoinData = bitcoinResponse?.data
   const { data: rankingsData, isLoading: rankingsLoading, error: rankingsError } = useAppRankings()
   const { data: topAppsData, isLoading: topAppsLoading, error: topAppsError } = useTopApps()
-  const [brrrTrigger, setBrrrTrigger] = useState(false)
-  const scrollBrrrVideos = useScrollBrrr()
 
-  // Trigger BRRR video when price goes up significantly
-  useEffect(() => {
-    if (bitcoinData?.price?.priceChangePercentage24h && bitcoinData.price.priceChangePercentage24h > 5) {
-      setBrrrTrigger(true)
-      setTimeout(() => setBrrrTrigger(false), 3000)
-    }
-  }, [bitcoinData?.price?.priceChangePercentage24h])
+  // Stable calculations with 5-minute caching to prevent frequent changes
+  const getStableTimestamp = () => {
+    // Round to 5-minute intervals for stability
+    return Math.floor(Date.now() / (5 * 60 * 1000)) * (5 * 60 * 1000)
+  }
 
-  // Helper functions for metric calculations
-  const calculatePiCycleRatio = () => {
-    const monthsSinceHalving = Math.floor((new Date().getTime() - new Date('2024-04-19').getTime()) / (1000 * 60 * 60 * 24 * 30.44))
+  const calculateStablePiCycleRatio = () => {
+    const stableTime = getStableTimestamp()
+    const monthsSinceHalving = Math.floor((stableTime - new Date('2024-04-19').getTime()) / (1000 * 60 * 60 * 24 * 30.44))
     let estimatedRatio = 2.0
     if (monthsSinceHalving < 12) {
       estimatedRatio = 2.0 + (monthsSinceHalving / 12) * 0.6
@@ -54,11 +49,14 @@ export function LiveDashboard() {
     } else {
       estimatedRatio = 3.0 + ((monthsSinceHalving - 18) / 6) * 0.142
     }
-    return Math.min(estimatedRatio + (Math.random() - 0.5) * 0.1, 3.142)
+    // Use stable time for consistent random seed
+    const randomSeed = Math.sin(stableTime / 1000000) * 0.1
+    return Math.min(estimatedRatio + randomSeed, 3.142)
   }
 
-  const calculateRHODLRatio = (currentPrice: number) => {
-    const monthsSinceHalving = Math.floor((new Date().getTime() - new Date('2024-04-19').getTime()) / (1000 * 60 * 60 * 24 * 30.44))
+  const calculateStableRHODLRatio = (currentPrice: number) => {
+    const stableTime = getStableTimestamp()
+    const monthsSinceHalving = Math.floor((stableTime - new Date('2024-04-19').getTime()) / (1000 * 60 * 60 * 24 * 30.44))
     let baseRhodl = 1500
     if (monthsSinceHalving < 12) {
       baseRhodl = 1500 + (monthsSinceHalving / 12) * 1500
@@ -68,7 +66,9 @@ export function LiveDashboard() {
       baseRhodl = 4500 + ((monthsSinceHalving - 18) / 6) * 2000
     }
     const priceMultiplier = Math.min(currentPrice / 100000, 1.3)
-    return Math.max(1000, baseRhodl * priceMultiplier + (Math.random() - 0.5) * 300)
+    // Use stable time for consistent random seed
+    const randomSeed = Math.sin(stableTime / 500000) * 300
+    return Math.max(1000, baseRhodl * priceMultiplier + randomSeed)
   }
 
   // Generate dynamic metrics from real data
@@ -169,15 +169,15 @@ export function LiveDashboard() {
           direction: 'up'
         },
         icon: 'rainbow',
-        color: bitcoinData.metrics.rainbowBand === 'Fire Sale' ? 'purple' :        // Deep purple - maximum opportunity
-                bitcoinData.metrics.rainbowBand === 'BUY!' ? 'blue' :              // Blue - strong buy
-                bitcoinData.metrics.rainbowBand === 'Accumulate' ? 'cyan' :        // Cyan - accumulation zone  
+        color: bitcoinData.metrics.rainbowBand === 'Fire Sale' ? 'red' :           // Red - maximum opportunity (bottom)
+                bitcoinData.metrics.rainbowBand === 'BUY!' ? 'orange' :            // Orange - strong buy
+                bitcoinData.metrics.rainbowBand === 'Accumulate' ? 'yellow' :      // Yellow - accumulation zone  
                 bitcoinData.metrics.rainbowBand === 'Cheap' ? 'green' :            // Green - still good value
-                bitcoinData.metrics.rainbowBand === 'HODL!' ? 'yellow' :           // Yellow - hold position
-                bitcoinData.metrics.rainbowBand === 'Bubble?' ? 'orange' :         // Orange - bubble forming
+                bitcoinData.metrics.rainbowBand === 'HODL!' ? 'cyan' :             // Cyan - hold position
+                bitcoinData.metrics.rainbowBand === 'Bubble?' ? 'blue' :           // Blue - bubble forming
                 bitcoinData.metrics.rainbowBand === 'FOMO' ? 'pink' :              // Pink - dangerous FOMO zone
-                bitcoinData.metrics.rainbowBand === 'SELL!' ? 'red' :              // Red - time to sell
-                bitcoinData.metrics.rainbowBand === 'Maximum Bubble' ? 'gray' :    // Gray - extreme danger
+                bitcoinData.metrics.rainbowBand === 'SELL!' ? 'purple' :           // Purple - time to sell
+                bitcoinData.metrics.rainbowBand === 'Maximum Bubble' ? 'purple' :  // Purple - extreme danger (top)
                 'green', // fallback
         historicalData: generateRainbowHistory()
       })
@@ -199,40 +199,13 @@ export function LiveDashboard() {
         historicalData: generateFearGreedHistory()
       })
 
-      // Add Pi Cycle Top indicator - show actual ratio instead of percentage
-      const calculatePiCycle = () => {
-        // Based on current cycle position and price level
-        const currentPrice = bitcoinData.price.price
-        const monthsSinceHalving = Math.floor((new Date().getTime() - new Date('2024-04-19').getTime()) / (1000 * 60 * 60 * 24 * 30.44))
-        
-        // Estimate the moving average ratio based on cycle position
-        // Early cycle: ratio around 2.0-2.5
-        // Mid cycle: ratio around 2.5-3.0  
-        // Late cycle: ratio approaches 3.142 (π)
-        
-        let estimatedRatio = 2.0
-        if (monthsSinceHalving < 12) {
-          estimatedRatio = 2.0 + (monthsSinceHalving / 12) * 0.6 // 2.0 → 2.6
-        } else if (monthsSinceHalving < 18) {
-          estimatedRatio = 2.6 + ((monthsSinceHalving - 12) / 6) * 0.4 // 2.6 → 3.0
-        } else {
-          estimatedRatio = 3.0 + ((monthsSinceHalving - 18) / 6) * 0.142 // 3.0 → 3.142
-        }
-        
-        // Cap at π and add some market volatility
-        estimatedRatio = Math.min(estimatedRatio + (Math.random() - 0.5) * 0.1, 3.142)
-        
-        const distanceToPI = Math.abs(3.142 - estimatedRatio)
-        const percentageToSignal = (distanceToPI / 3.142) * 100
-        
-        return {
-          ratio: estimatedRatio,
-          distanceToPI: distanceToPI,
-          percentageToSignal: percentageToSignal
-        }
+      // Add Pi Cycle Top indicator - use stable calculation
+      const piCycleRatio = calculateStablePiCycleRatio()
+      const piCycle = {
+        ratio: piCycleRatio,
+        distanceToPI: Math.abs(3.142 - piCycleRatio),
+        percentageToSignal: (Math.abs(3.142 - piCycleRatio) / 3.142) * 100
       }
-      
-      const piCycle = calculatePiCycle()
       metrics.push({
         id: '8',
         title: 'Pi Cycle Top',
@@ -247,38 +220,8 @@ export function LiveDashboard() {
         historicalData: generatePiCycleHistory()
       })
 
-      // Add RHODL Ratio with corrected calculation (real values ~3k-4k range)
-      const calculateRHODL = () => {
-        const currentPrice = bitcoinData.price.price
-        const monthsSinceHalving = Math.floor((new Date().getTime() - new Date('2024-04-19').getTime()) / (1000 * 60 * 60 * 24 * 30.44))
-        
-        // RHODL Ratio estimation based on BGE charts showing ~3k-4k range
-        // Low values (~1k-2k) = good accumulation  
-        // High values (~5k-8k+) = cycle top warning
-        
-        let baseRhodl = 1500 // Base during early cycle
-        
-        // Adjust based on cycle progression (much lower values)
-        if (monthsSinceHalving < 12) {
-          baseRhodl = 1500 + (monthsSinceHalving / 12) * 1500 // 1.5k → 3k
-        } else if (monthsSinceHalving < 18) {
-          baseRhodl = 3000 + ((monthsSinceHalving - 12) / 6) * 1500 // 3k → 4.5k
-        } else {
-          baseRhodl = 4500 + ((monthsSinceHalving - 18) / 6) * 2000 // 4.5k → 6.5k+
-        }
-        
-        // Adjust for current price level (higher prices = higher RHODL)
-        const priceMultiplier = Math.min(currentPrice / 100000, 1.3) // Cap at 1.3x
-        const estimatedRhodl = baseRhodl * priceMultiplier
-        
-        // Add some market volatility
-        const volatility = (Math.random() - 0.5) * 300
-        const finalRhodl = Math.max(1000, estimatedRhodl + volatility)
-        
-        return Math.round(finalRhodl)
-      }
-      
-      const rhodlRatio = calculateRHODL()
+      // Add RHODL Ratio - use stable calculation
+      const rhodlRatio = calculateStableRHODLRatio(bitcoinData.price.price)
       const rhodlChange = ((rhodlRatio - 3500) / 3500) * 100 // Compare to mid-cycle baseline of 3.5k
       
       metrics.push({
@@ -585,272 +528,242 @@ export function LiveDashboard() {
           )}
         </motion.div>
 
-        {/* 1. NUPL Comprehensive Analysis Section */}
+        {/* NUPL, SOPR, MVRV Combined Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.7 }}
         >
           {bitcoinData?.metrics?.analysis ? (
-            <Card className="border-0 bg-card">
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
-                    <CircleNotch className="h-5 w-5 text-purple-500" />
-                    <CardTitle className="text-foreground">NUPL - Net Unrealized Profit/Loss Analysis</CardTitle>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* NUPL Section */}
+              <Card className="border-0 bg-card">
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <CircleNotch className="h-5 w-5 text-purple-500" />
+                      <CardTitle className="text-foreground">NUPL</CardTitle>
+                    </div>
+                    <div className={`px-3 py-1 rounded-full text-xs font-bold border ${
+                      getSignalStyle(bitcoinData.metrics.analysis.nupl.signal).bg
+                    } ${
+                      getSignalStyle(bitcoinData.metrics.analysis.nupl.signal).text
+                    } ${
+                      getSignalStyle(bitcoinData.metrics.analysis.nupl.signal).border
+                    }`}>
+                      {bitcoinData.metrics.analysis.nupl.signal}
+                    </div>
                   </div>
-                  <div className={`px-3 py-1 rounded-full text-xs font-bold border ${
-                    getSignalStyle(bitcoinData.metrics.analysis.nupl.signal).bg
-                  } ${
-                    getSignalStyle(bitcoinData.metrics.analysis.nupl.signal).text
-                  } ${
-                    getSignalStyle(bitcoinData.metrics.analysis.nupl.signal).border
-                  }`}>
-                    {bitcoinData.metrics.analysis.nupl.signal}
-                  </div>
-                </div>
-                <p className="text-sm text-muted-foreground">
-                  Primary cycle timing indicator - tracks unrealized profit/loss across market cycles
-                </p>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                  {/* NUPL Visual Chart */}
-                  <div className="lg:col-span-2">
-                    <VisualNUPLChart 
-                      currentValue={bitcoinData.metrics.nupl}
-                      signal={bitcoinData.metrics.analysis.nupl.signal}
-                    />
-                  </div>
-                  
-                  {/* NUPL Gauge and Analysis */}
-                  <div className="space-y-6">
-                    <div className="p-4 bg-secondary/10 rounded-lg">
-                      <div className="flex items-center justify-between mb-4">
-                        <h3 className="text-lg font-bold text-foreground">Current NUPL</h3>
-                        <div className="text-3xl font-bold text-purple-500">
-                          {bitcoinData.metrics.nupl.toFixed(3)}
-                        </div>
+                  <p className="text-sm text-muted-foreground">
+                    Net Unrealized Profit/Loss
+                  </p>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  {/* NUPL Zones */}
+                  <div className="p-4 bg-secondary/10 rounded-lg">
+                    <h4 className="font-medium text-foreground mb-3">NUPL Zones</h4>
+                    <div className="space-y-2">
+                      <div className="flex items-center space-x-2">
+                        <div className="w-3 h-3 rounded-full bg-green-400" />
+                        <span className="text-xs text-muted-foreground">0-0.25: Capitulation</span>
                       </div>
-                      <MetricGauge
-                        value={bitcoinData.metrics.nupl}
-                        minValue={0}
-                        maxValue={1}
-                        signal={bitcoinData.metrics.analysis.nupl.signal}
-                        title="NUPL Score"
-                        zones={[
-                          { min: 0, max: 0.25, color: '#22c55e', label: 'CAPITULATION' },
-                          { min: 0.25, max: 0.5, color: '#eab308', label: 'HOPE/FEAR' },
-                          { min: 0.5, max: 0.75, color: '#f97316', label: 'OPTIMISM' },
-                          { min: 0.75, max: 1, color: '#ef4444', label: 'EUPHORIA' }
-                        ]}
-                      />
+                      <div className="flex items-center space-x-2">
+                        <div className="w-3 h-3 rounded-full bg-yellow-400" />
+                        <span className="text-xs text-muted-foreground">0.25-0.5: Hope/Fear</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <div className="w-3 h-3 rounded-full bg-orange-400" />
+                        <span className="text-xs text-muted-foreground">0.5-0.75: Optimism</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <div className="w-3 h-3 rounded-full bg-red-400" />
+                        <span className="text-xs text-muted-foreground">0.75-1.0: Euphoria</span>
+                      </div>
                     </div>
                   </div>
                   
-                  {/* NUPL Actionable Analysis */}
-                  <div className="space-y-4">
-                    <div className="p-4 bg-secondary/10 rounded-lg border-l-4 border-purple-500">
-                      <div className="flex items-center justify-between mb-3">
-                        <h3 className="font-bold text-foreground">Market Signal</h3>
-                        <ActionSignalComponent analysis={bitcoinData.metrics.analysis.nupl} compact />
-                      </div>
-                      <p className="text-sm text-muted-foreground">
-                        {bitcoinData.metrics.analysis.nupl.explanation}
-                      </p>
-                    </div>
-                    
+                  {/* NUPL Analysis */}
+                  <div>
                     <NUPLDetail
                       value={bitcoinData.metrics.nupl}
                       signal={bitcoinData.metrics.analysis.nupl.signal}
                     />
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-          ) : (
-            <Card className="border-0 bg-card">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-center h-32">
-                  <CircleNotch className="h-8 w-8 animate-spin text-primary" />
-                </div>
-              </CardContent>
-            </Card>
-          )}
-        </motion.div>
+                </CardContent>
+              </Card>
 
-        {/* 2. SOPR Comprehensive Analysis Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.8 }}
-        >
-          {bitcoinData?.metrics?.analysis ? (
-            <Card className="border-0 bg-card">
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
-                    <TrendUp className="h-5 w-5 text-green-500" />
-                    <CardTitle className="text-foreground">SOPR - Spent Output Profit Ratio Analysis</CardTitle>
+              {/* SOPR Section */}
+              <Card className="border-0 bg-card">
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <TrendUp className="h-5 w-5 text-green-500" />
+                      <CardTitle className="text-foreground">SOPR</CardTitle>
+                    </div>
+                    <div className={`px-3 py-1 rounded-full text-xs font-bold border ${
+                      getSignalStyle(bitcoinData.metrics.analysis.sopr.signal).bg
+                    } ${
+                      getSignalStyle(bitcoinData.metrics.analysis.sopr.signal).text
+                    } ${
+                      getSignalStyle(bitcoinData.metrics.analysis.sopr.signal).border
+                    }`}>
+                      {bitcoinData.metrics.analysis.sopr.signal}
+                    </div>
                   </div>
-                  <div className={`px-3 py-1 rounded-full text-xs font-bold border ${
-                    getSignalStyle(bitcoinData.metrics.analysis.sopr.signal).bg
-                  } ${
-                    getSignalStyle(bitcoinData.metrics.analysis.sopr.signal).text
-                  } ${
-                    getSignalStyle(bitcoinData.metrics.analysis.sopr.signal).border
-                  }`}>
-                    {bitcoinData.metrics.analysis.sopr.signal}
-                  </div>
-                </div>
-                <p className="text-sm text-muted-foreground">
-                  On-chain profitability indicator - shows whether investors are taking profits or losses
-                </p>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                  {/* SOPR Visual Chart */}
-                  <div className="lg:col-span-2">
-                    <VisualSOPRChart 
-                      currentValue={bitcoinData.metrics.sopr}
-                      signal={bitcoinData.metrics.analysis.sopr.signal}
-                    />
-                  </div>
-                  
-                  {/* SOPR Gauge and Analysis */}
-                  <div className="space-y-6">
-                    <div className="p-4 bg-secondary/10 rounded-lg">
-                      <div className="flex items-center justify-between mb-4">
-                        <h3 className="text-lg font-bold text-foreground">Current SOPR</h3>
-                        <div className="text-3xl font-bold text-green-500">
-                          {bitcoinData.metrics.sopr.toFixed(3)}
-                        </div>
+                  <p className="text-sm text-muted-foreground">
+                    Spent Output Profit Ratio
+                  </p>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  {/* SOPR Zones */}
+                  <div className="p-4 bg-secondary/10 rounded-lg">
+                    <h4 className="font-medium text-foreground mb-3">SOPR Zones</h4>
+                    <div className="space-y-2">
+                      <div className="flex items-center space-x-2">
+                        <div className="w-3 h-3 rounded-full bg-red-400" />
+                        <span className="text-xs text-muted-foreground">&lt; 1.0: Loss Selling</span>
                       </div>
-                      <MetricGauge
-                        value={bitcoinData.metrics.sopr}
-                        minValue={0.8}
-                        maxValue={1.2}
-                        signal={bitcoinData.metrics.analysis.sopr.signal}
-                        title="SOPR"
-                        zones={[
-                          { min: 0, max: 0.25, color: '#22c55e', label: 'LOSS SELLING' },
-                          { min: 0.25, max: 0.5, color: '#eab308', label: 'BREAKEVEN' },
-                          { min: 0.5, max: 0.75, color: '#f97316', label: 'PROFIT TAKING' },
-                          { min: 0.75, max: 1, color: '#ef4444', label: 'EXCESS PROFIT' }
-                        ]}
-                      />
+                      <div className="flex items-center space-x-2">
+                        <div className="w-3 h-3 rounded-full bg-yellow-400" />
+                        <span className="text-xs text-muted-foreground">1.0: Breakeven</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <div className="w-3 h-3 rounded-full bg-green-400" />
+                        <span className="text-xs text-muted-foreground">&gt; 1.0: Profit Taking</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <div className="w-3 h-3 rounded-full bg-orange-400" />
+                        <span className="text-xs text-muted-foreground">&gt; 1.1: Excess Profit</span>
+                      </div>
                     </div>
                   </div>
                   
-                  {/* SOPR Actionable Analysis */}
-                  <div className="space-y-4">
-                    <div className="p-4 bg-secondary/10 rounded-lg border-l-4 border-green-500">
-                      <div className="flex items-center justify-between mb-3">
-                        <h3 className="font-bold text-foreground">Market Signal</h3>
-                        <ActionSignalComponent analysis={bitcoinData.metrics.analysis.sopr} compact />
-                      </div>
-                      <p className="text-sm text-muted-foreground">
-                        {bitcoinData.metrics.analysis.sopr.explanation}
-                      </p>
-                    </div>
-                    
+                  {/* SOPR Analysis */}
+                  <div>
                     <SOPRDetail
                       value={bitcoinData.metrics.sopr}
                       signal={bitcoinData.metrics.analysis.sopr.signal}
                     />
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-          ) : (
-            <Card className="border-0 bg-card">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-center h-32">
-                  <CircleNotch className="h-8 w-8 animate-spin text-primary" />
-                </div>
-              </CardContent>
-            </Card>
-          )}
-        </motion.div>
+                </CardContent>
+              </Card>
 
-        {/* 3. MVRV Comprehensive Analysis Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.9 }}
-        >
-          {bitcoinData?.metrics?.analysis ? (
-            <Card className="border-0 bg-card">
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
-                    <ChartLine className="h-5 w-5 text-blue-500" />
-                    <CardTitle className="text-foreground">MVRV - Market Value to Realized Value Analysis</CardTitle>
+              {/* MVRV Section */}
+              <Card className="border-0 bg-card">
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <ChartLine className="h-5 w-5 text-blue-500" />
+                      <CardTitle className="text-foreground">MVRV</CardTitle>
+                    </div>
+                    <div className={`px-3 py-1 rounded-full text-xs font-bold border ${
+                      getSignalStyle(bitcoinData.metrics.analysis.mvrv.signal).bg
+                    } ${
+                      getSignalStyle(bitcoinData.metrics.analysis.mvrv.signal).text
+                    } ${
+                      getSignalStyle(bitcoinData.metrics.analysis.mvrv.signal).border
+                    }`}>
+                      {bitcoinData.metrics.analysis.mvrv.signal}
+                    </div>
                   </div>
-                  <div className={`px-3 py-1 rounded-full text-xs font-bold border ${
-                    getSignalStyle(bitcoinData.metrics.analysis.mvrv.signal).bg
-                  } ${
-                    getSignalStyle(bitcoinData.metrics.analysis.mvrv.signal).text
-                  } ${
-                    getSignalStyle(bitcoinData.metrics.analysis.mvrv.signal).border
-                  }`}>
-                    {bitcoinData.metrics.analysis.mvrv.signal}
+                  <p className="text-sm text-muted-foreground">
+                    Market Value to Realized Value
+                  </p>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  {/* Current MVRV */}
+                  <div className="p-4 bg-secondary/10 rounded-lg">
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-lg font-bold text-foreground">Current MVRV</h3>
+                      <div className="text-3xl font-bold text-blue-500">
+                        {bitcoinData.metrics.mvrv.toFixed(2)}
+                      </div>
+                    </div>
+                    <div className="p-3 bg-secondary/20 rounded-lg border-l-4 border-blue-500">
+                      <div className="flex items-center justify-between mb-2">
+                        <h4 className="font-bold text-foreground">Signal</h4>
+                        <ActionSignalComponent analysis={bitcoinData.metrics.analysis.mvrv} compact />
+                      </div>
+                      <p className="text-xs text-muted-foreground">
+                        {bitcoinData.metrics.analysis.mvrv.explanation}
+                      </p>
+                    </div>
                   </div>
-                </div>
-                <p className="text-sm text-muted-foreground">
-                  Valuation metric comparing current price to average price when coins last moved
-                </p>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                  {/* MVRV Visual Chart */}
-                  <div className="lg:col-span-2">
+                  
+                  {/* MVRV Zones */}
+                  <div className="p-4 bg-secondary/10 rounded-lg">
+                    <h4 className="font-medium text-foreground mb-3">MVRV Zones</h4>
+                    <div className="space-y-2">
+                      <div className="flex items-center space-x-2">
+                        <div className="w-3 h-3 rounded-full bg-green-400" />
+                        <span className="text-xs text-muted-foreground">0.5-1.5: Undervalued</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <div className="w-3 h-3 rounded-full bg-yellow-400" />
+                        <span className="text-xs text-muted-foreground">1.5-2.5: Fair Value</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <div className="w-3 h-3 rounded-full bg-orange-400" />
+                        <span className="text-xs text-muted-foreground">2.5-3.5: Overvalued</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <div className="w-3 h-3 rounded-full bg-red-400" />
+                        <span className="text-xs text-muted-foreground">&gt; 3.5: Extremely High</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* MVRV Threshold Analysis */}
+                  <div className="p-4 bg-secondary/10 rounded-lg">
+                    <h4 className="font-medium text-foreground mb-3">Threshold Analysis</h4>
+                    <div className="space-y-2 text-xs text-muted-foreground">
+                      <div>• &lt; 1.0: Strong accumulation zone</div>
+                      <div>• 1.0-2.0: DCA and build positions</div>
+                      <div>• 2.0-3.5: Monitor for distribution</div>
+                      <div>• &gt; 3.5: Consider taking profits</div>
+                    </div>
+                  </div>
+                  
+                  {/* MVRV Historical Context */}
+                  <div className="p-4 bg-secondary/10 rounded-lg">
+                    <h4 className="font-medium text-foreground mb-3">Historical Context</h4>
+                    <div className="space-y-2 text-xs text-muted-foreground">
+                      <div>• 2017 Peak: MVRV reached ~4.8</div>
+                      <div>• 2021 Peak: MVRV hit ~4.2</div>
+                      <div>• Bear Markets: Often drop below 1.0</div>
+                      <div>• Current Cycle: Tracking {bitcoinData.metrics.mvrv.toFixed(2)}</div>
+                    </div>
+                  </div>
+                  
+                  {/* MVRV Interpretation Guide */}
+                  <div className="p-4 bg-secondary/10 rounded-lg">
+                    <h4 className="font-medium text-foreground mb-3">Interpretation Guide</h4>
+                    <div className="space-y-2">
+                      <div className="p-2 bg-green-500/10 border border-green-500/20 rounded text-xs">
+                        <div className="font-medium text-green-400 mb-1">Bullish (&lt; 2.0)</div>
+                        <div className="text-muted-foreground">Market undervalued, strong accumulation opportunity</div>
+                      </div>
+                      <div className="p-2 bg-yellow-500/10 border border-yellow-500/20 rounded text-xs">
+                        <div className="font-medium text-yellow-400 mb-1">Neutral (2.0-3.0)</div>
+                        <div className="text-muted-foreground">Fair value range, hold and monitor</div>
+                      </div>
+                      <div className="p-2 bg-red-500/10 border border-red-500/20 rounded text-xs">
+                        <div className="font-medium text-red-400 mb-1">Bearish (&gt; 3.5)</div>
+                        <div className="text-muted-foreground">Market overvalued, consider profit taking</div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* MVRV Analysis */}
+                  <div>
                     <VisualMVRVChart 
                       currentValue={bitcoinData.metrics.mvrv}
                       signal={bitcoinData.metrics.analysis.mvrv.signal}
                     />
                   </div>
-                  
-                  {/* MVRV Gauge and Analysis */}
-                  <div className="space-y-6">
-                    <div className="p-4 bg-secondary/10 rounded-lg">
-                      <div className="flex items-center justify-between mb-4">
-                        <h3 className="text-lg font-bold text-foreground">Current MVRV</h3>
-                        <div className="text-3xl font-bold text-blue-500">
-                          {bitcoinData.metrics.mvrv.toFixed(2)}
-                        </div>
-                      </div>
-                      <MetricGauge
-                        value={bitcoinData.metrics.mvrv}
-                        minValue={0.5}
-                        maxValue={5}
-                        signal={bitcoinData.metrics.analysis.mvrv.signal}
-                        title="MVRV Z-Score"
-                        zones={[
-                          { min: 0, max: 0.25, color: '#22c55e', label: 'UNDERVALUED' },
-                          { min: 0.25, max: 0.5, color: '#eab308', label: 'FAIR VALUE' },
-                          { min: 0.5, max: 0.75, color: '#f97316', label: 'OVERVALUED' },
-                          { min: 0.75, max: 1, color: '#ef4444', label: 'EXTREMELY HIGH' }
-                        ]}
-                      />
-                    </div>
-                  </div>
-                  
-                  {/* MVRV Actionable Analysis */}
-                  <div className="space-y-4">
-                    <div className="p-4 bg-secondary/10 rounded-lg border-l-4 border-blue-500">
-                      <div className="flex items-center justify-between mb-3">
-                        <h3 className="font-bold text-foreground">Market Signal</h3>
-                        <ActionSignalComponent analysis={bitcoinData.metrics.analysis.mvrv} compact />
-                      </div>
-                      <p className="text-sm text-muted-foreground">
-                        {bitcoinData.metrics.analysis.mvrv.explanation}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </div>
           ) : (
             <Card className="border-0 bg-card">
               <CardContent className="p-6">
@@ -1058,17 +971,17 @@ export function LiveDashboard() {
                       <div className="flex items-center justify-between mb-4">
                         <h3 className="text-lg font-bold text-foreground">Current Ratio</h3>
                         <div className="text-4xl font-bold text-blue-500">
-                          2.756
+                          {calculateStablePiCycleRatio().toFixed(3)}
                         </div>
                       </div>
                       <div className="w-full bg-muted rounded-full h-3 mb-2">
                         <div 
                           className="bg-gradient-to-r from-blue-500 to-purple-500 h-3 rounded-full"
-                          style={{ width: '87.7%' }}
+                          style={{ width: `${(calculateStablePiCycleRatio() / 3.142 * 100).toFixed(1)}%` }}
                         />
                       </div>
                       <p className="text-sm text-muted-foreground">
-                        Distance to π (3.142) signal: 12.3%
+                        Distance to π (3.142) signal: {((3.142 - calculateStablePiCycleRatio()) / 3.142 * 100).toFixed(1)}%
                       </p>
                     </div>
                   </div>
@@ -1128,17 +1041,21 @@ export function LiveDashboard() {
                       <div className="flex items-center justify-between mb-4">
                         <h3 className="text-lg font-bold text-foreground">Current RHODL</h3>
                         <div className="text-4xl font-bold text-orange-500">
-                          4.2K
+                          {(calculateStableRHODLRatio(bitcoinData.price.price) / 1000).toFixed(1)}K
                         </div>
                       </div>
                       <div className="w-full bg-muted rounded-full h-3 mb-2">
                         <div 
-                          className="h-3 rounded-full bg-yellow-400"
-                          style={{ width: '52.5%' }}
+                          className={`h-3 rounded-full ${
+                            calculateStableRHODLRatio(bitcoinData.price.price) < 2500 ? 'bg-green-400' : 
+                            calculateStableRHODLRatio(bitcoinData.price.price) < 5000 ? 'bg-yellow-400' : 'bg-red-400'
+                          }`}
+                          style={{ width: `${Math.min(calculateStableRHODLRatio(bitcoinData.price.price) / 8000 * 100, 100)}%` }}
                         />
                       </div>
                       <p className="text-sm text-muted-foreground">
-                        Hold Zone
+                        {calculateStableRHODLRatio(bitcoinData.price.price) < 2500 ? 'Accumulation Zone' : 
+                         calculateStableRHODLRatio(bitcoinData.price.price) < 5000 ? 'Hold Zone' : 'Consider Taking Profits'}
                       </p>
                     </div>
                   </div>
@@ -1174,6 +1091,7 @@ export function LiveDashboard() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1.4 }}
+          className="relative"
         >
           <Card className="border-0 bg-card">
             <CardHeader>
@@ -1187,7 +1105,17 @@ export function LiveDashboard() {
                 </div>
               </div>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-6 relative">
+              {/* Coming Soon Overlay */}
+              <div className="absolute inset-0 bg-card/95 backdrop-blur-sm z-10 flex items-center justify-center rounded-lg">
+                <div className="text-center space-y-4">
+                  <Gauge className="h-16 w-16 text-primary mx-auto animate-pulse" />
+                  <div className="text-2xl font-bold text-foreground">Coming Soon</div>
+                  <div className="text-muted-foreground max-w-md">
+                    Enhanced app store rankings with real-time API integration are being finalized.
+                  </div>
+                </div>
+              </div>
               {/* Current Crypto App Rankings */}
               {rankingsData && (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -1249,29 +1177,6 @@ export function LiveDashboard() {
           </Card>
         </motion.div>
 
-        {/* Fixed BRRR Video */}
-        <div className="fixed bottom-6 right-6 z-50">
-          <BrrrVideo 
-            trigger={brrrTrigger} 
-            size="medium"
-            className="animate-bounce"
-          />
-        </div>
-
-        {/* Scroll-triggered BRRR Videos */}
-        {scrollBrrrVideos.map((video) => (
-          <div
-            key={video.id}
-            className={`fixed z-40 ${video.side === 'left' ? 'left-4' : 'right-4'}`}
-            style={{ top: `${video.position}%` }}
-          >
-            <BrrrVideo 
-              trigger={true} 
-              size="small"
-              className="animate-pulse"
-            />
-          </div>
-        ))}
       </div>
     </AppLayout>
   )

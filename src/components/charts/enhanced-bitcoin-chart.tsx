@@ -10,10 +10,16 @@ interface EnhancedBitcoinChartProps {
 }
 
 export function EnhancedBitcoinChart({ data, currentPrice = 108700, targetPrice }: EnhancedBitcoinChartProps) {
+  // Stable timestamp for consistent predictions (5-minute intervals)
+  const getStableTimestamp = () => {
+    return Math.floor(Date.now() / (5 * 60 * 1000)) * (5 * 60 * 1000)
+  }
+
   // Generate realistic monthly Bitcoin price data with predictions
   const generateCompleteData = () => {
-    const now = Date.now()
-    const currentDate = new Date()
+    const stableTime = getStableTimestamp()
+    const now = stableTime
+    const currentDate = new Date(stableTime)
     const currentYear = currentDate.getFullYear()
     const currentMonth = currentDate.getMonth() + 1 // 1-12
     const oneMonth = 30 * 24 * 60 * 60 * 1000
@@ -199,8 +205,8 @@ export function EnhancedBitcoinChart({ data, currentPrice = 108700, targetPrice 
         const growthFactor = Math.pow(progressToPeak, 0.7) // Slower growth curve
         predictedPrice = currentPricePoint + (peakPrice - currentPricePoint) * growthFactor
         
-        // Add some volatility
-        const volatility = Math.sin(monthsFromNow * 0.5) * 8000
+        // Add some volatility using stable timestamp
+        const volatility = Math.sin((stableTime / 1000000) + (monthsFromNow * 0.5)) * 8000
         predictedPrice += volatility
         
       } else {
@@ -220,21 +226,22 @@ export function EnhancedBitcoinChart({ data, currentPrice = 108700, targetPrice 
           baseDecline = 0.35 + progress * 0.25 // Total 60% max decline
         } else {
           // Consolidation phase around previous cycle high
-          baseDecline = 0.60 + Math.sin((monthsAfterPeak - 8) * 0.5) * 0.1
+          baseDecline = 0.60 + Math.sin((stableTime / 2000000) + ((monthsAfterPeak - 8) * 0.5)) * 0.1
         }
         
         predictedPrice = peakPrice * (1 - baseDecline)
         
-        // Add realistic volatility with dead cat bounces
-        const volatilityPhase = Math.sin(monthsAfterPeak * 0.8) * 0.15 // 15% volatility
-        const deadCatBounce = Math.sin(monthsAfterPeak * 1.2) * 0.08 // 8% bounces
+        // Add realistic volatility with dead cat bounces using stable timestamp
+        const volatilityPhase = Math.sin((stableTime / 1500000) + (monthsAfterPeak * 0.8)) * 0.15 // 15% volatility
+        const deadCatBounce = Math.sin((stableTime / 1200000) + (monthsAfterPeak * 1.2)) * 0.08 // 8% bounces
         const combinedVolatility = (volatilityPhase + deadCatBounce) * predictedPrice
         
         predictedPrice += combinedVolatility
         
         // Ensure we don't go below previous cycle high for too long
         if (monthsAfterPeak > 6 && predictedPrice < previousCycleHigh) {
-          predictedPrice = Math.max(predictedPrice, bearMarketBottom + Math.random() * (previousCycleHigh - bearMarketBottom))
+          const stableRandomSeed = Math.sin(stableTime / 1000000 + monthsAfterPeak) * 0.5 + 0.5 // 0-1 range
+          predictedPrice = Math.max(predictedPrice, bearMarketBottom + stableRandomSeed * (previousCycleHigh - bearMarketBottom))
         }
       }
       
@@ -412,7 +419,7 @@ export function EnhancedBitcoinChart({ data, currentPrice = 108700, targetPrice 
         timestamp = date.getTime()
       } else {
         // Historical and current data uses explicit date mapping
-        const dateInfo = monthYearMap[item.month as keyof typeof monthYearMap]
+        const dateInfo = monthYearMap[item.month as keyof typeof monthYearMap] || monthYearMap[-1]
         if (dateInfo) {
           date = new Date(dateInfo.year, dateInfo.month - 1, 1) // Month is 0-indexed
           timestamp = date.getTime()
@@ -593,9 +600,10 @@ export function EnhancedBitcoinChart({ data, currentPrice = 108700, targetPrice 
               label={{ 
                 value: "Cycle Target", 
                 position: "insideTopRight", 
-                fill: "#ef4444", 
+                fill: "#ffffff", 
                 fontSize: 12,
-                offset: -60
+                offset: -60,
+                textAnchor: "middle"
               }}
             />
           )}

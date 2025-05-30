@@ -32,8 +32,11 @@ graph TB
     subgraph "External Data Sources"
         CoinGecko[CoinGecko API]
         Coinpaprika[Coinpaprika API]
+        BGeoMetrics[BGeo Metrics API]
         FearGreed[Fear & Greed Index]
         AppStore[iOS/Android App Stores]
+        iTunesAPI[iTunes API]
+        GooglePlayAPI[Google Play API]
     end
     
     UI --> Charts
@@ -75,7 +78,7 @@ graph TB
     
     subgraph "Output Predictions"
         CycleTop[Predicted Cycle Top]
-        PriceTarget[$132K Target]
+        PriceTarget[$176K Target]
         TimingPrediction[Timing Predictions]
         ActionableSignals[Actionable Signals]
     end
@@ -202,22 +205,22 @@ graph TB
 ```mermaid
 graph TB
     subgraph "Input Variables"
-        CurrentPrice[Current Price: $105,722]
+        CurrentPrice[Current Price: $108,700]
         HistoricalData[Historical Monthly Highs]
         CyclePosition[Current Cycle Position]
         VolatilityFactors[Volatility Factors]
     end
     
     subgraph "Calculation Engine"
-        BaseTarget[Base Target = Current × 1.25]
+        BaseTarget[Base Target = Current × 1.63]
         CycleAdjustment[Cycle Position Adjustment]
         VolatilitySmoothing[Volatility Smoothing]
         PatternMatching[Pattern Matching]
     end
     
     subgraph "Output Prediction"
-        PredictedPeak[Predicted Peak: $132K]
-        PeakTiming[Peak Timing: 6 months]
+        PredictedPeak[Predicted Peak: $176K]
+        PeakTiming[Peak Timing: 3-6 months]
         ConfidenceLevel[Confidence Level: High]
         ActionSignal[Action Signal: ACCUMULATE]
     end
@@ -238,13 +241,14 @@ graph TB
 The core prediction algorithm uses the following formula:
 
 ```
-Predicted Peak = Current Price × Growth Factor × Cycle Multiplier × Volatility Dampener
+Predicted Peak = Current Price × Dynamic Growth Factor × Cycle Multiplier × Volatility Dampener
 
 Where:
-- Growth Factor = 1.25 (base 25% growth expectation)
-- Cycle Multiplier = f(months_to_peak, historical_patterns)
+- Dynamic Growth Factor = 1.63 (enhanced 63% mid-bull cycle expectation)
+- Cycle Multiplier = f(months_to_peak, phase_progression, historical_patterns)
 - Volatility Dampener = sin(cycle_position) × volatility_constant
-- Peak Timing = 6 months from current (based on cycle analysis)
+- Peak Timing = 3-6 months from current (Mid Bull phase analysis)
+- Phase Threshold = Extended to <75 for sustained Mid Bull positioning
 ```
 
 ## 📱 App Store Integration Architecture
@@ -427,8 +431,9 @@ graph TB
 
 - **Bitcoin Data**: BGeo Metrics API (primary), CoinGecko API, Coinpaprika API
 - **On-chain Metrics**: BGeo Metrics for NUPL, SOPR, MVRV, and Bitcoin dominance
-- **App Store Data**: App Store Connect API, Google Play Console API
+- **App Store Data**: iTunes API, Google Play API, App Store Connect API
 - **Market Sentiment**: Fear & Greed Index API
+- **API Health Monitoring**: Real-time health checks for all 6 data sources
 - **Real-time Updates**: 30-second polling intervals
 - **Caching Strategy**: React Query with 5-minute cache TTL
 - **Error Handling**: Graceful fallbacks and retry logic

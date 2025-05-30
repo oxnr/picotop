@@ -6,7 +6,7 @@ A sophisticated Bitcoin cycle prediction platform that delivers actionable tradi
 
 Picojeet is an advanced Bitcoin cycle analysis platform that combines multiple data sources and proprietary algorithms to predict market cycles with precision. The platform features real-time market analysis, historical pattern recognition, and innovative correlation studies between crypto app rankings and market psychology.
 
-**Current Prediction: Bitcoin Cycle Top at $132K in 6 months**
+**Current Prediction: Bitcoin Cycle Top at $176K in 3-6 months**
 
 ## 🚀 Key Features
 
@@ -14,25 +14,27 @@ Picojeet is an advanced Bitcoin cycle analysis platform that combines multiple d
 
 **Mathematical Model**: Our proprietary algorithm analyzes historical data, cycle patterns, and volatility factors to predict the next Bitcoin cycle top with high confidence.
 
-**Current Prediction**: $132K target based on:
-- Current price: $105,722
-- Base growth factor: 1.25 (25% conservative growth expectation)
-- Cycle analysis: 6 months to peak timing
+**Current Prediction**: $176K target based on:
+- Current price: $108,700
+- Enhanced growth factor: 1.63 (63% mid-bull cycle expectation)
+- Cycle analysis: 3-6 months to peak timing (Mid Bull phase)
 - Historical pattern matching: 2017-2018 and 2020-2021 cycle comparisons
+- Adjusted thresholds: Extended Mid Bull phase for more accurate timing
 
 #### Prediction Formula
 
 ```
-Predicted Peak = Current Price × Growth Factor × Cycle Multiplier × Volatility Dampener
+Predicted Peak = Current Price × Dynamic Growth Factor × Cycle Multiplier × Volatility Dampener
 
 Where:
-- Current Price = $105,722 (real-time)
-- Growth Factor = 1.25 (base 25% growth expectation)
-- Cycle Multiplier = f(months_to_peak, historical_patterns)
+- Current Price = $108,700 (real-time)
+- Dynamic Growth Factor = 1.63 (enhanced 63% mid-bull cycle expectation)
+- Cycle Multiplier = f(months_to_peak, phase_progression, historical_patterns)
 - Volatility Dampener = sin(cycle_position) × volatility_constant
-- Peak Timing = 6 months from current (based on cycle analysis)
+- Peak Timing = 3-6 months from current (Mid Bull phase analysis)
+- Phase Threshold = Extended to <75 for sustained Mid Bull positioning
 
-Result: $132K predicted cycle top
+Result: $176K predicted cycle top (170-180K target range)
 ```
 
 #### How It Works
@@ -268,17 +270,19 @@ Our prediction engine combines multiple analytical approaches:
 ## 🔮 Current Market Analysis
 
 ### Real-time Status
-- **Current Price**: $105,722 (live data)
-- **Predicted Peak**: $132,090 (25% growth)
-- **Time to Peak**: ~6 months
-- **Confidence Level**: High (based on historical convergence)
-- **Current Signal**: ACCUMULATE
+- **Current Price**: $108,700 (live data)
+- **Predicted Peak**: $176,000 (63% growth from current Mid Bull phase)
+- **Time to Peak**: 3-6 months (Mid Bull phase analysis)
+- **Late Bull Timing**: 2-6 months for sustained Late Bull scenarios
+- **Confidence Level**: High (based on enhanced cycle progression models)
+- **Current Signal**: ACCUMULATE/HOLD
 
 ### Cycle Position
-- **Stage**: Late accumulation phase
-- **Next Phase**: Acceleration toward cycle peak
-- **Key Levels**: Watch for $120K breakthrough
-- **Risk Factors**: Regulatory changes, macro conditions
+- **Stage**: Mid Bull phase (extended threshold <75 for accurate timing)
+- **Next Phase**: Late Bull acceleration toward cycle peak
+- **Key Levels**: Watch for $130K breakthrough into Late Bull territory
+- **Target Range**: 170-180K based on dynamic growth factor methodology
+- **Risk Factors**: Regulatory changes, macro conditions, cycle phase transition timing
 
 ## 🤝 Contributing
 

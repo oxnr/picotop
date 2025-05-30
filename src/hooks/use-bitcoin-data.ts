@@ -18,7 +18,9 @@ interface BitcoinResponse {
       coingecko: boolean
       coinpaprika: boolean
       feargreed: boolean
-      bgeometrics: boolean
+      bgeo: boolean
+      applestore: boolean
+      googleplay: boolean
     }
     sources: {
       price: string

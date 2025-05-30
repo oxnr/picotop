@@ -43,14 +43,26 @@ function AppRow({ app, index }: { app: TopAppData; index: number }) {
     >
       {/* Rank */}
       <div className="flex items-center justify-center w-8 text-lg font-bold text-foreground mr-3">
-        #{app.categoryRank}
-        {getRankIcon(app.categoryRank)}
+        #{app.rank}
+        {getRankIcon(app.rank)}
       </div>
       
       {/* App Icon */}
       <div className="w-10 h-10 rounded-lg overflow-hidden mr-3 flex-shrink-0">
-        <div className="w-full h-full bg-muted text-2xl flex items-center justify-center rounded-lg">
-          {app.icon}
+        {app.icon && app.icon.startsWith('http') ? (
+          <img 
+            src={app.icon} 
+            alt={app.appName}
+            className="w-full h-full object-cover"
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              target.style.display = 'none';
+              target.nextElementSibling!.classList.remove('hidden');
+            }}
+          />
+        ) : null}
+        <div className={`w-full h-full bg-gradient-to-br from-primary/20 to-primary/10 text-lg font-bold flex items-center justify-center rounded-lg text-foreground ${app.icon && app.icon.startsWith('http') ? 'hidden' : ''}`}>
+          {app.icon && !app.icon.startsWith('http') ? app.icon : app.appName.charAt(0).toUpperCase()}
         </div>
       </div>
       
@@ -69,10 +81,11 @@ function AppRow({ app, index }: { app: TopAppData; index: number }) {
         <div className="text-sm text-muted-foreground truncate">{app.publisher}</div>
       </div>
       
-      {/* Score */}
+      {/* App Store Rank & Score */}
       <div className="text-right mr-3">
-        <div className="text-sm font-medium text-foreground">{app.score}</div>
-        <div className="text-xs text-muted-foreground">Score</div>
+        <div className="text-sm font-medium text-foreground">#{app.categoryRank}</div>
+        <div className="text-xs text-muted-foreground">App Store</div>
+        <div className="text-xs font-medium text-primary mt-1">{app.score}</div>
       </div>
       
       {/* Change */}
@@ -131,7 +144,7 @@ function PlatformRankings({ title, apps, platform }: {
       </CardHeader>
       <CardContent>
         <div className="space-y-1 max-h-96 overflow-y-auto">
-          {apps.slice(0, 20).map((app, index) => (
+          {apps.slice(0, 25).map((app, index) => (
             <AppRow key={app.appId} app={app} index={index} />
           ))}
         </div>

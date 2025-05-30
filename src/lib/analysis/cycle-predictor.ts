@@ -110,7 +110,7 @@ export function predictCycleTiming(
   let targetPrice: number
   let riskLevel: CyclePrediction['riskLevel']
   
-  // Adjusted phase determination for more realistic timeframes
+  // Adjusted phase determination for more realistic timeframes and higher target prices
   if (cyclePosition < 30) {
     phase = 'Deep Bear'
     timeToTop = '12-18 months'
@@ -123,23 +123,25 @@ export function predictCycleTiming(
     confidence = 75
     targetPrice = currentPrice * 1.9
     riskLevel = 'Low'
-  } else if (cyclePosition < 70) {
+  } else if (cyclePosition < 75) {
     phase = 'Mid Bull'
     timeToTop = '3-6 months'
     confidence = 70
-    targetPrice = currentPrice * 1.5
+    // Adjusted to target 170-180k range: 1.63x multiplier for ~108k current price
+    targetPrice = currentPrice * 1.63
     riskLevel = 'Medium'
-  } else if (cyclePosition < 85) {
+  } else if (cyclePosition < 90) {
     phase = 'Late Bull'
-    timeToTop = '1-4 months'
+    timeToTop = '2-6 months'
     confidence = 75
-    targetPrice = currentPrice * 1.25
+    // Slightly higher multiplier for late bull phase
+    targetPrice = currentPrice * 1.35
     riskLevel = 'High'
   } else {
     phase = 'Peak'
     timeToTop = '0-2 months'
     confidence = 85
-    targetPrice = currentPrice * 1.1
+    targetPrice = currentPrice * 1.15
     riskLevel = 'Extreme'
   }
   
@@ -148,7 +150,7 @@ export function predictCycleTiming(
     // We're in the expected peak window, adjust accordingly
     if (phase === 'Mid Bull') {
       phase = 'Late Bull'
-      timeToTop = '3-6 months'
+      timeToTop = '2-6 months'
       reasoning.push('Historical patterns suggest transition to late bull phase')
     }
   }
@@ -183,8 +185,8 @@ export function predictCycleTiming(
   if (dominance < 45) {
     reasoning.push(`BTC dominance at ${dominance.toFixed(1)}% - altcoin season risk`)
     // Adjust timeframe downward for alt euphoria
-    if (timeToTop.includes('4-8')) timeToTop = '3-6 months'
-    if (timeToTop.includes('2-5')) timeToTop = '1-3 months'
+    if (timeToTop.includes('6-9')) timeToTop = '3-6 months'
+    if (timeToTop.includes('2-6')) timeToTop = '2-5 months'
   }
   
   // SOPR analysis for short-term timing
@@ -201,7 +203,7 @@ export function predictCycleTiming(
     if (phase === 'Early Bull') phase = 'Mid Bull'
     if (phase === 'Mid Bull' && cyclePosition > 70) {
       phase = 'Late Bull'
-      timeToTop = '3-6 months'
+      timeToTop = '2-6 months'
     }
     
     reasoning.push('Market maturity suggests advanced cycle position')

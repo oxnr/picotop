@@ -183,17 +183,17 @@ export function MetricDetail({
         <div className="pt-4 border-t border-border">
           <h4 className="text-sm font-medium text-foreground mb-3">Interpretation Guide</h4>
           <div className="grid grid-cols-1 gap-3">
-            <div className="p-3 bg-green-500/10 border border-green-500/20 rounded-lg h-20 flex flex-col">
-              <div className="text-sm font-medium text-green-400 mb-1">Bullish Signal</div>
-              <div className="text-xs text-muted-foreground flex-1">{interpretation.bullish}</div>
+            <div className="p-3 bg-green-500/10 border border-green-500/20 rounded-lg min-h-16">
+              <div className="text-sm font-medium text-green-400 mb-2">Bullish Signal</div>
+              <div className="text-xs text-muted-foreground leading-relaxed">{interpretation.bullish}</div>
             </div>
-            <div className="p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg h-20 flex flex-col">
-              <div className="text-sm font-medium text-yellow-400 mb-1">Neutral/Hold</div>
-              <div className="text-xs text-muted-foreground flex-1">{interpretation.neutral}</div>
+            <div className="p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg min-h-16">
+              <div className="text-sm font-medium text-yellow-400 mb-2">Neutral/Hold</div>
+              <div className="text-xs text-muted-foreground leading-relaxed">{interpretation.neutral}</div>
             </div>
-            <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-lg h-20 flex flex-col">
-              <div className="text-sm font-medium text-red-400 mb-1">Bearish Signal</div>
-              <div className="text-xs text-muted-foreground flex-1">{interpretation.bearish}</div>
+            <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-lg min-h-16">
+              <div className="text-sm font-medium text-red-400 mb-2">Bearish Signal</div>
+              <div className="text-xs text-muted-foreground leading-relaxed">{interpretation.bearish}</div>
             </div>
           </div>
         </div>

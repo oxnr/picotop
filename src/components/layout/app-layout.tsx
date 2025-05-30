@@ -11,6 +11,9 @@ interface AppLayoutProps {
       coingecko: boolean
       coinpaprika: boolean
       feargreed: boolean
+      bgeo: boolean
+      applestore: boolean
+      googleplay: boolean
     }
     lastUpdated?: string
     sources?: {

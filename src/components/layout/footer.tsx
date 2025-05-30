@@ -10,6 +10,9 @@ interface FooterProps {
     coingecko: boolean
     coinpaprika: boolean
     feargreed: boolean
+    bgeo: boolean
+    applestore: boolean
+    googleplay: boolean
   }
   lastUpdated?: string
   sources?: {
@@ -37,85 +40,79 @@ export function Footer({ apiHealth, lastUpdated, sources }: FooterProps) {
         )}
 
         {/* Main Footer Content */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+          {/* Picojeet Branding */}
+          <div className="space-y-6">
+            <div>
+              <h2 className="text-2xl font-bold text-foreground mb-3">
+                Bitcoin Cycle Prediction Platform
+              </h2>
+              <p className="text-muted-foreground leading-relaxed max-w-md">
+                Real-time on-chain analytics and AI-powered cycle predictions to help you time the perfect exit.
+              </p>
+            </div>
+            
+            <div className="text-sm text-muted-foreground/80 space-y-1">
+              <div>Real-time data from CoinGecko, Coinpaprika, BGeo Metrics & Fear/Greed Index</div>
+              <div>App Store rankings via iTunes & Google Play APIs with on-chain metrics</div>
+            </div>
+          </div>
+
           {/* Odyssey Attribution */}
-          <div className="col-span-1 md:col-span-2">
-            <div className="flex items-center space-x-4 mb-4">
-              <motion.div
+          <div className="space-y-6">
+            <div>
+              <motion.a
+                href="https://binary.builders/odyssey/"
+                target="_blank"
+                rel="noopener noreferrer"
                 whileHover={{ scale: 1.05 }}
                 transition={{ duration: 0.2 }}
+                className="inline-block"
               >
                 <img 
                   src="https://binary.builders/images/odyssey/odysee-logo.png" 
                   alt="Odyssey Logo"
-                  className="h-12 w-auto"
+                  className="h-14 w-auto"
                 />
-              </motion.div>
-              <div>
-                <h3 className="text-lg font-bold text-foreground">An Odyssey Project</h3>
-                <p className="text-sm text-muted-foreground">
-                  Built with love by Binary Builders
-                </p>
-              </div>
+              </motion.a>
             </div>
             
-            <p className="text-sm text-muted-foreground max-w-md leading-relaxed">
-              Picojeet is proudly part of the Odyssey ecosystem - advancing the future of 
-              decentralized applications and empowering degens to time their perfect exits.
-            </p>
-            
-            <motion.a
-              href="https://binary.builders/odyssey/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center space-x-2 mt-4 text-primary hover:text-primary/80 transition-colors"
-              whileHover={{ x: 2 }}
-              transition={{ duration: 0.2 }}
-            >
-              <span className="text-sm font-medium">Learn more about Odyssey</span>
-              <ArrowSquareOut className="h-4 w-4" />
-            </motion.a>
-          </div>
-
-          {/* Project Info */}
-          <div className="space-y-4">
-            <div>
-              <PicojeetWordmark className="mb-3" />
-              <p className="text-xs text-muted-foreground">
-                Real-time Bitcoin cycle prediction platform for timing your perfect jeets.
+            <div className="space-y-2">
+              <div className="text-xl font-bold text-foreground">An Odyssey Project - Built by Binary Builders</div>
+              <p className="text-muted-foreground leading-relaxed">
+                Part of the Odyssey ecosystem advancing decentralized applications.
               </p>
-            </div>
-            
-            <div>
-              <h4 className="text-sm font-semibold text-foreground mb-2">Data Sources</h4>
-              <ul className="space-y-1 text-xs text-muted-foreground">
-                <li>• CoinGecko & Coinpaprika APIs</li>
-                <li>• Fear & Greed Index</li>
-                <li>• Enhanced App Store Rankings</li>
-                <li>• Real-time On-chain Metrics</li>
-              </ul>
             </div>
           </div>
         </div>
 
         {/* Bottom Bar */}
-        <div className="mt-8 pt-6 border-t border-border">
-          <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-            <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+        <div className="mt-12 pt-6 border-t border-border/50">
+          <div className="flex flex-col md:flex-row justify-between items-center space-y-3 md:space-y-0">
+            <div className="flex items-center space-x-2 text-sm text-muted-foreground/70">
               <span>Made with</span>
-              <Heart className="h-4 w-4 text-red-500" weight="fill" />
+              <Heart className="h-4 w-4 text-red-400" weight="fill" />
               <span>by</span>
               <a 
                 href="https://binary.builders" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="text-primary hover:text-primary/80 transition-colors font-medium"
+                className="text-foreground hover:text-primary transition-colors font-medium"
               >
                 Binary Builders
               </a>
             </div>
             
-            <div className="text-xs text-muted-foreground">
+            <div className="flex items-center justify-center">
+              <motion.div
+                whileHover={{ scale: 1.02 }}
+                transition={{ duration: 0.2 }}
+              >
+                <PicojeetWordmark className="scale-90" />
+              </motion.div>
+            </div>
+            
+            <div className="text-sm text-muted-foreground/70">
               © 2025 Picojeet
             </div>
           </div>
