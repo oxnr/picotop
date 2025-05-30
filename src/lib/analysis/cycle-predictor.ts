@@ -134,8 +134,8 @@ export function predictCycleTiming(
     phase = 'Late Bull'
     timeToTop = '2-6 months'
     confidence = 75
-    // Slightly higher multiplier for late bull phase
-    targetPrice = currentPrice * 1.35
+    // Adjusted to maintain 170-180k target range even in late bull phase
+    targetPrice = currentPrice * 1.63
     riskLevel = 'High'
   } else {
     phase = 'Peak'
@@ -151,6 +151,8 @@ export function predictCycleTiming(
     if (phase === 'Mid Bull') {
       phase = 'Late Bull'
       timeToTop = '2-6 months'
+      // Maintain consistent target price regardless of phase transition
+      targetPrice = currentPrice * 1.63
       reasoning.push('Historical patterns suggest transition to late bull phase')
     }
   }

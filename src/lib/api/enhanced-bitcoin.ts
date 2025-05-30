@@ -611,14 +611,14 @@ async function getCurrentPrice(): Promise<number> {
     }
   }
 
-  // Fallback to reasonable current estimate
-  return 105000
+  // Fallback to reasonable current estimate consistent with documentation
+  return 108700
 }
 
 function enhancedMockBitcoinPrice(): BitcoinPrice {
   const basePrice = 108700 // Current real BTC price
   const variation = (Math.random() - 0.5) * 800 // Smaller variations for more realistic data
-  const price = Math.max(105000, Math.min(115000, basePrice + variation)) // Bound within realistic range
+  const price = Math.max(107000, Math.min(115000, basePrice + variation)) // Bound within realistic range
   
   return {
     price,
