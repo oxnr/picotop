@@ -204,27 +204,42 @@ export function EnhancedBitcoinChart({ data, currentPrice = 108700, targetPrice 
         predictedPrice += volatility
         
       } else {
-        // Bear market after peak - decline with bounce
+        // Bear market after peak - realistic decline with bounces
         const monthsAfterPeak = monthsFromNow - peakMonth
-        let declineFactor
+        const previousCycleHigh = 68000 // 2021 ATH as major support
+        const bearMarketBottom = 45000 // Absolute floor
         
-        if (monthsAfterPeak <= 6) {
-          // Sharp decline first 6 months (50-70% drop)
-          declineFactor = Math.pow(monthsAfterPeak / 6, 0.5) * 0.65
+        // More realistic bear market progression
+        let baseDecline
+        if (monthsAfterPeak <= 3) {
+          // Initial crash - 35% drop in first 3 months
+          baseDecline = Math.pow(monthsAfterPeak / 3, 0.8) * 0.35
+        } else if (monthsAfterPeak <= 8) {
+          // Continued decline to previous cycle high level
+          const progress = (monthsAfterPeak - 3) / 5
+          baseDecline = 0.35 + progress * 0.25 // Total 60% max decline
         } else {
-          // Slower decline/consolidation
-          declineFactor = 0.65 + (monthsAfterPeak - 6) * 0.02
+          // Consolidation phase around previous cycle high
+          baseDecline = 0.60 + Math.sin((monthsAfterPeak - 8) * 0.5) * 0.1
         }
         
-        predictedPrice = peakPrice * (1 - declineFactor)
+        predictedPrice = peakPrice * (1 - baseDecline)
         
-        // Add bear market volatility
-        const volatility = Math.sin(monthsAfterPeak * 0.3) * 5000
-        predictedPrice += volatility
+        // Add realistic volatility with dead cat bounces
+        const volatilityPhase = Math.sin(monthsAfterPeak * 0.8) * 0.15 // 15% volatility
+        const deadCatBounce = Math.sin(monthsAfterPeak * 1.2) * 0.08 // 8% bounces
+        const combinedVolatility = (volatilityPhase + deadCatBounce) * predictedPrice
+        
+        predictedPrice += combinedVolatility
+        
+        // Ensure we don't go below previous cycle high for too long
+        if (monthsAfterPeak > 6 && predictedPrice < previousCycleHigh) {
+          predictedPrice = Math.max(predictedPrice, bearMarketBottom + Math.random() * (previousCycleHigh - bearMarketBottom))
+        }
       }
       
-      // Ensure reasonable bounds
-      predictedPrice = Math.max(30000, Math.min(300000, predictedPrice))
+      // Ensure realistic bounds: don't go below 45K or above 300K
+      predictedPrice = Math.max(45000, Math.min(300000, predictedPrice))
       
       futurePredictions.push({
         month: -monthsFromNow, // Start from -2 (June 2025)
@@ -397,7 +412,7 @@ export function EnhancedBitcoinChart({ data, currentPrice = 108700, targetPrice 
         timestamp = date.getTime()
       } else {
         // Historical and current data uses explicit date mapping
-        const dateInfo = monthYearMap[item.month]
+        const dateInfo = monthYearMap[item.month as keyof typeof monthYearMap]
         if (dateInfo) {
           date = new Date(dateInfo.year, dateInfo.month - 1, 1) // Month is 0-indexed
           timestamp = date.getTime()
@@ -518,9 +533,10 @@ export function EnhancedBitcoinChart({ data, currentPrice = 108700, targetPrice 
             dataKey="monthYear" 
             axisLine={false}
             tickLine={false}
-            tick={{ fill: '#a1a0a0', fontSize: 10, angle: -45, textAnchor: 'end' }}
+            tick={{ fill: '#a1a0a0', fontSize: 10, textAnchor: 'end' }}
             height={80}
             interval={6}
+            angle={-45}
           />
           
           <YAxis 
@@ -528,6 +544,28 @@ export function EnhancedBitcoinChart({ data, currentPrice = 108700, targetPrice 
             tickLine={false}
             tick={{ fill: '#a1a0a0', fontSize: 12 }}
             domain={['dataMin * 0.8', 'dataMax * 1.1']}
+            ticks={(() => {
+              // Generate custom ticks to include current price and target
+              const minPrice = Math.min(...chartData.map(d => d.price)) * 0.8
+              const maxPrice = Math.max(...chartData.map(d => d.price)) * 1.1
+              const targetPrice = currentPrice * 1.25
+              
+              // Create a set of key price levels
+              const keyLevels = new Set([
+                Math.round(minPrice / 10000) * 10000, // Round to nearest 10K
+                20000, // 2017 cycle top
+                50000, // Previous cycle support
+                70000, // Previous cycle high (2021 ATH)
+                Math.round(currentPrice / 5000) * 5000, // Current price rounded to 5K
+                Math.round(targetPrice / 5000) * 5000, // Target price rounded to 5K
+                Math.round(maxPrice / 10000) * 10000 // Max rounded to 10K
+              ])
+              
+              // Convert to sorted array and filter within range
+              return Array.from(keyLevels)
+                .filter(price => price >= minPrice && price <= maxPrice)
+                .sort((a, b) => a - b)
+            })()}
             tickFormatter={(value) => {
               if (value >= 1000000) return `$${(value / 1000000).toFixed(1)}M`
               if (value >= 1000) return `$${(value / 1000).toFixed(0)}K`
