@@ -157,11 +157,13 @@ export function VisualRainbowChart({ currentPrice, rainbowBand }: VisualRainbowC
               />
               <YAxis 
                 scale="log"
-                domain={[100, 200000]}
+                domain={['dataMin', 'dataMax']}
                 stroke="#9CA3AF"
                 fontSize={12}
                 tick={{ fill: '#9CA3AF' }}
                 tickFormatter={formatPrice}
+                type="number"
+                ticks={[1000, 5000, 10000, 25000, 50000, 100000, 200000]}
               />
               
               {/* Rainbow band reference lines */}

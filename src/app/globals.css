@@ -246,3 +246,41 @@ body {
     opacity: 1;
   }
 }
+
+/* 3D Flip Card Styles */
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+}
+
+/* Ensure proper card dimensions */
+.stats-card-container {
+  min-height: 160px;
+  max-height: 200px;
+}
+
+/* Fix any card layout issues */
+.card-flip-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.card-flip-container .card-front,
+.card-flip-container .card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+}
+
+.card-flip-container .card-back {
+  transform: rotateY(180deg);
+}

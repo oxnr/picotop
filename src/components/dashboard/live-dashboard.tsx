@@ -2,7 +2,7 @@
 
 import { AppLayout } from '@/components/layout'
 import { StatsCard } from '@/components/dashboard'
-import { EnhancedBitcoinChart, RainbowChart, MetricGauge, NUPLDetail, SOPRDetail, DominanceDetail, VisualNUPLChart, VisualRainbowChart, VisualSOPRChart, VisualMVRVChart, ComprehensiveMetrics, BTCDominanceChart } from '@/components/charts'
+import { EnhancedBitcoinChart, RainbowChart, MetricGauge, NUPLDetail, SOPRDetail, DominanceDetail, VisualNUPLChart, VisualRainbowChart, VisualSOPRChart, VisualMVRVChart, ComprehensiveMetrics, BTCDominanceChart, SaylorTracker, ETFFlowsChart } from '@/components/charts'
 import { TopAppsRankings } from '@/components/rankings'
 import { ActionSignalComponent } from '@/components/metrics'
 import { Card, CardContent, CardHeader, CardTitle, DataStatus } from '@/components/ui'
@@ -10,7 +10,7 @@ import { DashboardMetric } from '@/lib/types'
 import { getSignalStyle } from '@/lib/constants/signals'
 import { CurrencyBtc, TrendUp, ChartLine, Ranking, Warning, Clock, CircleNotch, Trophy, Target, Gauge } from '@phosphor-icons/react'
 import { motion } from 'framer-motion'
-import { useBitcoinData, useAppRankings, useTopApps } from '@/hooks'
+import { useBitcoinData, useAppRankings, useTopApps, useSaylorTracker, useMicroStrategy, useETFFlows } from '@/hooks'
 import { getAverageRanking } from '@/lib/api/real-app-store'
 import { predictCycleTiming, getCycleHealthScore } from '@/lib/analysis/cycle-predictor'
 import { 
@@ -31,6 +31,9 @@ export function LiveDashboard() {
   const bitcoinData = bitcoinResponse?.data
   const { data: rankingsData, isLoading: rankingsLoading, error: rankingsError } = useAppRankings()
   const { data: topAppsData, isLoading: topAppsLoading, error: topAppsError } = useTopApps()
+  const { data: saylorData, isLoading: saylorLoading, error: saylorError } = useSaylorTracker()
+  const { data: microStrategyData, isLoading: microStrategyLoading, error: microStrategyError } = useMicroStrategy()
+  const { data: etfFlowsData, isLoading: etfFlowsLoading, error: etfFlowsError } = useETFFlows()
 
   // Stable calculations with 5-minute caching to prevent frequent changes
   const getStableTimestamp = () => {
@@ -257,11 +260,46 @@ export function LiveDashboard() {
       })
     }
 
+    // Add MicroStrategy Holdings metric
+    if (microStrategyData) {
+      metrics.push({
+        id: '11',
+        title: 'MSTR Holdings',
+        value: `${(microStrategyData.totalBitcoin / 1000).toFixed(0)}K BTC`,
+        change: {
+          value: Math.round(microStrategyData.pnlPercentage * 10) / 10,
+          period: 'unrealized P&L',
+          direction: microStrategyData.pnlPercentage >= 0 ? 'up' : 'down'
+        },
+        icon: 'bitcoin',
+        color: microStrategyData.pnlPercentage >= 0 ? 'green' : 'red',
+        historicalData: [] // Could add historical holdings data
+      })
+    }
+
+    // Add ETF Flows metric
+    if (etfFlowsData) {
+      const flows24h = etfFlowsData.netFlows24h
+      metrics.push({
+        id: '12',
+        title: 'ETF Flows',
+        value: `$${Math.abs(flows24h / 1000000).toFixed(0)}M`,
+        change: {
+          value: Math.abs(flows24h / 1000000),
+          period: 'last 24h',
+          direction: flows24h >= 0 ? 'up' : 'down'
+        },
+        icon: 'trend',
+        color: flows24h >= 0 ? 'green' : 'red',
+        historicalData: [] // Could add historical flows data
+      })
+    }
+
     return metrics
   }
 
   const metrics = generateMetrics()
-  const isLoading = bitcoinLoading || rankingsLoading
+  const isLoading = bitcoinLoading || rankingsLoading || microStrategyLoading || etfFlowsLoading
   const hasError = bitcoinError || rankingsError
 
   if (hasError) {
@@ -315,14 +353,14 @@ export function LiveDashboard() {
         </motion.div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {metrics.length > 0 ? (
             metrics.map((metric, index) => (
               <StatsCard key={metric.id} metric={metric} index={index} />
             ))
           ) : (
             // Loading skeletons
-            Array.from({ length: 10 }).map((_, index) => (
+            Array.from({ length: 12 }).map((_, index) => (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 20 }}
@@ -559,35 +597,23 @@ export function LiveDashboard() {
                   </p>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                  {/* NUPL Zones */}
+                  {/* Current NUPL */}
                   <div className="p-4 bg-secondary/10 rounded-lg">
-                    <h4 className="font-medium text-foreground mb-3">NUPL Zones</h4>
-                    <div className="space-y-2">
-                      <div className="flex items-center space-x-2">
-                        <div className="w-3 h-3 rounded-full bg-green-400" />
-                        <span className="text-xs text-muted-foreground">0-0.25: Capitulation</span>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <div className="w-3 h-3 rounded-full bg-yellow-400" />
-                        <span className="text-xs text-muted-foreground">0.25-0.5: Hope/Fear</span>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <div className="w-3 h-3 rounded-full bg-orange-400" />
-                        <span className="text-xs text-muted-foreground">0.5-0.75: Optimism</span>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <div className="w-3 h-3 rounded-full bg-red-400" />
-                        <span className="text-xs text-muted-foreground">0.75-1.0: Euphoria</span>
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-lg font-bold text-foreground">Current NUPL</h3>
+                      <div className="text-3xl font-bold text-purple-500">
+                        {bitcoinData.metrics.nupl.toFixed(3)}
                       </div>
                     </div>
-                  </div>
-                  
-                  {/* NUPL Analysis */}
-                  <div>
-                    <NUPLDetail
-                      value={bitcoinData.metrics.nupl}
-                      signal={bitcoinData.metrics.analysis.nupl.signal}
-                    />
+                    <div className="p-3 bg-secondary/20 rounded-lg border-l-4 border-purple-500">
+                      <div className="flex items-center justify-between mb-2">
+                        <h4 className="font-bold text-foreground">Signal</h4>
+                        <ActionSignalComponent analysis={bitcoinData.metrics.analysis.nupl} compact />
+                      </div>
+                      <p className="text-xs text-muted-foreground">
+                        {bitcoinData.metrics.analysis.nupl.explanation}
+                      </p>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -615,33 +641,29 @@ export function LiveDashboard() {
                   </p>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                  {/* SOPR Zones */}
+                  {/* Current SOPR */}
                   <div className="p-4 bg-secondary/10 rounded-lg">
-                    <h4 className="font-medium text-foreground mb-3">SOPR Zones</h4>
-                    <div className="space-y-2">
-                      <div className="flex items-center space-x-2">
-                        <div className="w-3 h-3 rounded-full bg-red-400" />
-                        <span className="text-xs text-muted-foreground">&lt; 1.0: Loss Selling</span>
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-lg font-bold text-foreground">Current SOPR</h3>
+                      <div className="text-3xl font-bold text-green-500">
+                        {bitcoinData.metrics.sopr.toFixed(3)}
                       </div>
-                      <div className="flex items-center space-x-2">
-                        <div className="w-3 h-3 rounded-full bg-yellow-400" />
-                        <span className="text-xs text-muted-foreground">1.0: Breakeven</span>
+                    </div>
+                    <div className="p-3 bg-secondary/20 rounded-lg border-l-4 border-green-500">
+                      <div className="flex items-center justify-between mb-2">
+                        <h4 className="font-bold text-foreground">Signal</h4>
+                        <ActionSignalComponent analysis={bitcoinData.metrics.analysis.sopr} compact />
                       </div>
-                      <div className="flex items-center space-x-2">
-                        <div className="w-3 h-3 rounded-full bg-green-400" />
-                        <span className="text-xs text-muted-foreground">&gt; 1.0: Profit Taking</span>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <div className="w-3 h-3 rounded-full bg-orange-400" />
-                        <span className="text-xs text-muted-foreground">&gt; 1.1: Excess Profit</span>
-                      </div>
+                      <p className="text-xs text-muted-foreground">
+                        {bitcoinData.metrics.analysis.sopr.explanation}
+                      </p>
                     </div>
                   </div>
                   
-                  {/* SOPR Analysis */}
+                  {/* SOPR Chart */}
                   <div>
-                    <SOPRDetail
-                      value={bitcoinData.metrics.sopr}
+                    <VisualSOPRChart 
+                      currentValue={bitcoinData.metrics.sopr}
                       signal={bitcoinData.metrics.analysis.sopr.signal}
                     />
                   </div>
@@ -690,69 +712,6 @@ export function LiveDashboard() {
                     </div>
                   </div>
                   
-                  {/* MVRV Zones */}
-                  <div className="p-4 bg-secondary/10 rounded-lg">
-                    <h4 className="font-medium text-foreground mb-3">MVRV Zones</h4>
-                    <div className="space-y-2">
-                      <div className="flex items-center space-x-2">
-                        <div className="w-3 h-3 rounded-full bg-green-400" />
-                        <span className="text-xs text-muted-foreground">0.5-1.5: Undervalued</span>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <div className="w-3 h-3 rounded-full bg-yellow-400" />
-                        <span className="text-xs text-muted-foreground">1.5-2.5: Fair Value</span>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <div className="w-3 h-3 rounded-full bg-orange-400" />
-                        <span className="text-xs text-muted-foreground">2.5-3.5: Overvalued</span>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <div className="w-3 h-3 rounded-full bg-red-400" />
-                        <span className="text-xs text-muted-foreground">&gt; 3.5: Extremely High</span>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  {/* MVRV Threshold Analysis */}
-                  <div className="p-4 bg-secondary/10 rounded-lg">
-                    <h4 className="font-medium text-foreground mb-3">Threshold Analysis</h4>
-                    <div className="space-y-2 text-xs text-muted-foreground">
-                      <div>• &lt; 1.0: Strong accumulation zone</div>
-                      <div>• 1.0-2.0: DCA and build positions</div>
-                      <div>• 2.0-3.5: Monitor for distribution</div>
-                      <div>• &gt; 3.5: Consider taking profits</div>
-                    </div>
-                  </div>
-                  
-                  {/* MVRV Historical Context */}
-                  <div className="p-4 bg-secondary/10 rounded-lg">
-                    <h4 className="font-medium text-foreground mb-3">Historical Context</h4>
-                    <div className="space-y-2 text-xs text-muted-foreground">
-                      <div>• 2017 Peak: MVRV reached ~4.8</div>
-                      <div>• 2021 Peak: MVRV hit ~4.2</div>
-                      <div>• Bear Markets: Often drop below 1.0</div>
-                      <div>• Current Cycle: Tracking {bitcoinData.metrics.mvrv.toFixed(2)}</div>
-                    </div>
-                  </div>
-                  
-                  {/* MVRV Interpretation Guide */}
-                  <div className="p-4 bg-secondary/10 rounded-lg">
-                    <h4 className="font-medium text-foreground mb-3">Interpretation Guide</h4>
-                    <div className="space-y-2">
-                      <div className="p-2 bg-green-500/10 border border-green-500/20 rounded text-xs">
-                        <div className="font-medium text-green-400 mb-1">Bullish (&lt; 2.0)</div>
-                        <div className="text-muted-foreground">Market undervalued, strong accumulation opportunity</div>
-                      </div>
-                      <div className="p-2 bg-yellow-500/10 border border-yellow-500/20 rounded text-xs">
-                        <div className="font-medium text-yellow-400 mb-1">Neutral (2.0-3.0)</div>
-                        <div className="text-muted-foreground">Fair value range, hold and monitor</div>
-                      </div>
-                      <div className="p-2 bg-red-500/10 border border-red-500/20 rounded text-xs">
-                        <div className="font-medium text-red-400 mb-1">Bearish (&gt; 3.5)</div>
-                        <div className="text-muted-foreground">Market overvalued, consider profit taking</div>
-                      </div>
-                    </div>
-                  </div>
                   
                   {/* MVRV Analysis */}
                   <div>
@@ -775,84 +734,6 @@ export function LiveDashboard() {
           )}
         </motion.div>
 
-        {/* 4. Rainbow Comprehensive Analysis Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.0 }}
-        >
-          {bitcoinData?.metrics?.analysis ? (
-            <Card className="border-0 bg-card">
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
-                    <div className="h-5 w-5 bg-gradient-to-r from-purple-500 via-blue-500 via-green-500 via-yellow-500 via-orange-500 to-red-500 rounded" />
-                    <CardTitle className="text-foreground">Rainbow Chart - Logarithmic Regression Analysis</CardTitle>
-                  </div>
-                  <div className={`px-3 py-1 rounded-full text-xs font-bold border ${
-                    getSignalStyle(bitcoinData.metrics.analysis.rainbowBand.signal).bg
-                  } ${
-                    getSignalStyle(bitcoinData.metrics.analysis.rainbowBand.signal).text
-                  } ${
-                    getSignalStyle(bitcoinData.metrics.analysis.rainbowBand.signal).border
-                  }`}>
-                    {bitcoinData.metrics.analysis.rainbowBand.signal}
-                  </div>
-                </div>
-                <p className="text-sm text-muted-foreground">
-                  Long-term price valuation model using logarithmic regression against time
-                </p>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                  {/* Rainbow Visual Chart */}
-                  <div className="lg:col-span-2">
-                    <VisualRainbowChart 
-                      currentPrice={bitcoinData.price.price}
-                      rainbowBand={bitcoinData.metrics.rainbowBand}
-                    />
-                  </div>
-                  
-                  {/* Rainbow Current Status */}
-                  <div className="space-y-6">
-                    <div className="p-4 bg-secondary/10 rounded-lg">
-                      <div className="flex items-center justify-between mb-4">
-                        <h3 className="text-lg font-bold text-foreground">Current Band</h3>
-                        <div className="text-2xl font-bold text-orange-500">
-                          {bitcoinData.metrics.rainbowBand}
-                        </div>
-                      </div>
-                      <p className="text-sm text-muted-foreground">
-                        Bitcoin is currently in the <span className="font-bold text-orange-500">{bitcoinData.metrics.rainbowBand}</span> band based on logarithmic price regression.
-                      </p>
-                    </div>
-                  </div>
-                  
-                  {/* Rainbow Actionable Analysis */}
-                  <div className="space-y-4">
-                    <div className="p-4 bg-secondary/10 rounded-lg border-l-4 border-orange-500">
-                      <div className="flex items-center justify-between mb-3">
-                        <h3 className="font-bold text-foreground">Market Signal</h3>
-                        <ActionSignalComponent analysis={bitcoinData.metrics.analysis.rainbowBand} compact />
-                      </div>
-                      <p className="text-sm text-muted-foreground">
-                        {bitcoinData.metrics.analysis.rainbowBand.explanation}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ) : (
-            <Card className="border-0 bg-card">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-center h-32">
-                  <CircleNotch className="h-8 w-8 animate-spin text-primary" />
-                </div>
-              </CardContent>
-            </Card>
-          )}
-        </motion.div>
 
         {/* 5. Fear & Greed Comprehensive Analysis Section */}
         <motion.div
@@ -1086,11 +967,122 @@ export function LiveDashboard() {
           )}
         </motion.div>
 
-        {/* 8. App Store Rankings Comprehensive Section */}
+        {/* 8. Institutional Bitcoin Holdings & ETF Analysis */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1.4 }}
+        >
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* MicroStrategy Detailed View */}
+            {microStrategyData ? (
+              <Card className="border-0 bg-card relative">
+                <CardHeader>
+                  <div className="flex items-center space-x-2">
+                    <CurrencyBtc className="h-6 w-6 text-orange-500" />
+                    <CardTitle className="text-foreground">MicroStrategy Holdings</CardTitle>
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    Corporate Bitcoin treasury strategy
+                  </p>
+                </CardHeader>
+                <CardContent className="space-y-4 relative">
+                  {/* Coming Soon Overlay */}
+                  <div className="absolute inset-0 bg-card/95 backdrop-blur-sm z-10 flex items-center justify-center rounded-lg">
+                    <div className="text-center space-y-4">
+                      <CurrencyBtc className="h-16 w-16 text-orange-500 mx-auto animate-pulse" />
+                      <div className="text-2xl font-bold text-foreground">Coming Soon</div>
+                      <div className="text-muted-foreground max-w-md">
+                        Enhanced MicroStrategy tracking with real-time SEC filings integration.
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="text-center p-4 bg-secondary/10 rounded-lg">
+                      <div className="text-2xl font-bold text-orange-500 mb-1">
+                        {microStrategyData.totalBitcoin.toLocaleString()}
+                      </div>
+                      <div className="text-sm text-muted-foreground">Total BTC</div>
+                    </div>
+                    <div className="text-center p-4 bg-secondary/10 rounded-lg">
+                      <div className="text-2xl font-bold text-blue-500 mb-1">
+                        ${microStrategyData.averagePrice.toLocaleString()}
+                      </div>
+                      <div className="text-sm text-muted-foreground">Avg Price</div>
+                    </div>
+                  </div>
+                  
+                  <div className="p-4 bg-secondary/10 rounded-lg">
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="text-muted-foreground">Unrealized P&L</span>
+                      <span className={`text-lg font-bold ${
+                        microStrategyData.pnlPercentage >= 0 ? 'text-green-400' : 'text-red-400'
+                      }`}>
+                        {microStrategyData.pnlPercentage >= 0 ? '+' : ''}{microStrategyData.pnlPercentage.toFixed(1)}%
+                      </span>
+                    </div>
+                    <div className="w-full bg-muted rounded-full h-2">
+                      <div 
+                        className={`h-2 rounded-full ${
+                          microStrategyData.pnlPercentage >= 0 ? 'bg-green-400' : 'bg-red-400'
+                        }`}
+                        style={{ 
+                          width: `${Math.min(Math.abs(microStrategyData.pnlPercentage), 100)}%` 
+                        }}
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="text-xs text-muted-foreground">
+                    Last updated: {new Date(microStrategyData.lastUpdated).toLocaleDateString()}
+                  </div>
+                </CardContent>
+              </Card>
+            ) : (
+              <Card className="border-0 bg-card">
+                <CardContent className="p-6 flex items-center justify-center h-48">
+                  <CircleNotch className="h-8 w-8 animate-spin text-primary" />
+                </CardContent>
+              </Card>
+            )}
+
+            {/* ETF Flows Chart */}
+            {etfFlowsData && etfFlowsData.historicalFlows ? (
+              <div className="relative">
+                <ETFFlowsChart 
+                  data={etfFlowsData.historicalFlows}
+                  totalAUM={etfFlowsData.totalAUM}
+                  netFlows24h={etfFlowsData.netFlows24h}
+                  netFlows7d={etfFlowsData.netFlows7d}
+                  netFlows30d={etfFlowsData.netFlows30d}
+                />
+                {/* Coming Soon Overlay */}
+                <div className="absolute inset-0 bg-card/95 backdrop-blur-sm z-10 flex items-center justify-center rounded-lg">
+                  <div className="text-center space-y-4">
+                    <Target className="h-16 w-16 text-green-500 mx-auto animate-pulse" />
+                    <div className="text-2xl font-bold text-foreground">Coming Soon</div>
+                    <div className="text-muted-foreground max-w-md">
+                      Real-time ETF flow tracking with live institutional demand data.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <Card className="border-0 bg-card">
+                <CardContent className="p-6 flex items-center justify-center h-48">
+                  <CircleNotch className="h-8 w-8 animate-spin text-primary" />
+                </CardContent>
+              </Card>
+            )}
+          </div>
+        </motion.div>
+
+        {/* 9. App Store Rankings Comprehensive Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.5 }}
           className="relative"
         >
           <Card className="border-0 bg-card">

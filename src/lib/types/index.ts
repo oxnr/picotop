@@ -134,3 +134,49 @@ export interface ApiError {
   details?: any
   timestamp: Date
 }
+
+// MicroStrategy Holdings Types
+export interface MicroStrategyData {
+  company: string
+  ticker: string
+  totalBitcoin: number
+  averagePrice: number
+  totalCostBasis: number
+  currentBitcoinPrice: number
+  currentValue: number
+  unrealizedPnL: number
+  pnlPercentage: number
+  lastUpdated: string
+  marketCap: number
+  btcPercentOfMarketCap: number
+  meta: {
+    source: string
+    disclaimer: string
+    dataFreshness: string
+  }
+}
+
+// ETF Flows Types
+export interface ETFData {
+  ticker: string
+  name: string
+  aum: number
+  flow24h: number
+  btcHoldings?: number
+  premium?: number
+}
+
+export interface ETFFlowsData {
+  totalAUM: number
+  netFlows24h: number
+  netFlows7d: number
+  netFlows30d: number
+  topETFs: ETFData[]
+  historicalFlows?: Array<{
+    date: string
+    netFlow: number
+    btcPrice: number
+    etfFlows: { [key: string]: number }
+  }>
+  lastUpdated: string
+}

@@ -127,8 +127,16 @@ export function VisualMVRVChart({ currentValue, signal }: VisualMVRVChartProps) 
                   }}
                 >
                   <div className="text-xs font-medium text-foreground text-center">
-                    <div>{zone.label}</div>
-                    <div className="text-muted-foreground">{zone.min}→{zone.max}</div>
+                    <div className="text-xs leading-tight">
+                      {zone.label === 'UNDERVALUED' ? (
+                        <>UNDER<br />VALUED</>
+                      ) : zone.label === 'OVERVALUED' ? (
+                        <>OVER<br />VALUED</>
+                      ) : (
+                        zone.label
+                      )}
+                    </div>
+                    <div className="text-muted-foreground text-xs leading-tight">{zone.min}→{zone.max}</div>
                   </div>
                 </div>
               )
@@ -145,100 +153,6 @@ export function VisualMVRVChart({ currentValue, signal }: VisualMVRVChartProps) 
           </div>
         </div>
 
-        <div className="mb-6">
-          <div className="h-32 relative">
-            <svg width="100%" height="128" className="overflow-visible">
-              <defs>
-                <linearGradient id="mvrvHistorical" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0%" stopColor="#8b5cf6" />
-                  <stop offset="100%" stopColor="#3b82f6" />
-                </linearGradient>
-                <linearGradient id="mvrvPrediction" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0%" stopColor="#f97316" />
-                  <stop offset="100%" stopColor="#fbbf24" />
-                </linearGradient>
-              </defs>
-              
-              <path
-                d={data
-                  .filter(d => !d.isPrediction)
-                  .map((d, i, arr) => {
-                    const x = (i / (arr.length - 1)) * 60
-                    const y = 128 - ((d.value - (-1)) / (10 - (-1))) * 128
-                    return `${i === 0 ? 'M' : 'L'} ${x}% ${y}`
-                  })
-                  .join(' ')}
-                fill="none"
-                stroke="url(#mvrvHistorical)"
-                strokeWidth="2"
-              />
-              
-              <path
-                d={data
-                  .filter(d => d.isPrediction)
-                  .map((d, i, arr) => {
-                    const x = 60 + (i / (arr.length - 1)) * 40
-                    const y = 128 - ((d.value - (-1)) / (10 - (-1))) * 128
-                    return `${i === 0 ? 'M' : 'L'} ${x}% ${y}`
-                  })
-                  .join(' ')}
-                fill="none"
-                stroke="url(#mvrvPrediction)"
-                strokeWidth="2"
-                strokeDasharray="4 2"
-              />
-              
-              <line
-                x1="0%"
-                y1={128 - ((3 - (-1)) / (10 - (-1))) * 128}
-                x2="100%"
-                y2={128 - ((3 - (-1)) / (10 - (-1))) * 128}
-                stroke="#666"
-                strokeWidth="1"
-                strokeDasharray="2 2"
-              />
-              <line
-                x1="0%"
-                y1={128 - ((7 - (-1)) / (10 - (-1))) * 128}
-                x2="100%"
-                y2={128 - ((7 - (-1)) / (10 - (-1))) * 128}
-                stroke="#666"
-                strokeWidth="1"
-                strokeDasharray="2 2"
-              />
-            </svg>
-          </div>
-          
-          <div className="flex justify-between text-xs text-muted-foreground mt-2">
-            <span>1Y Ago</span>
-            <span>Now</span>
-            <span>1.5Y Future</span>
-          </div>
-        </div>
-
-        <div className="space-y-3">
-          <div className="p-3 bg-secondary/10 rounded-lg">
-            <h4 className="text-sm font-medium text-foreground mb-2">Current Analysis</h4>
-            <p className="text-sm text-muted-foreground">
-              {currentZone.description}. MVRV Z-Score measures how far market value deviates from realized value. Values above 7 historically mark cycle tops, while negative values indicate deep value.
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-3 gap-2 text-xs">
-            <div className="text-center p-2 bg-green-500/10 rounded">
-              <div className="text-green-400 font-medium">&lt; 1</div>
-              <div className="text-muted-foreground">Strong Buy</div>
-            </div>
-            <div className="text-center p-2 bg-yellow-500/10 rounded">
-              <div className="text-yellow-400 font-medium">1-5</div>
-              <div className="text-muted-foreground">Fair Value</div>
-            </div>
-            <div className="text-center p-2 bg-red-500/10 rounded">
-              <div className="text-red-400 font-medium">&gt; 7</div>
-              <div className="text-muted-foreground">Cycle Top</div>
-            </div>
-          </div>
-        </div>
       </CardContent>
     </Card>
   )
