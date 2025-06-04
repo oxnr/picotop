@@ -181,20 +181,3 @@ export interface ETFFlowsData {
   lastUpdated: string
 }
 
-// Saylor Tracker Types
-export interface SaylorTrackerData {
-  personalHoldings: number
-  averagePrice: number
-  totalCostBasis: number
-  currentBitcoinPrice: number
-  currentValue: number
-  unrealizedPnL: number
-  pnlPercentage: number
-  lastUpdated: string
-  purchaseHistory: Array<{
-    date: string
-    amount: number
-    price: number
-    cost: number
-  }>
-}

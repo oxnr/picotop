@@ -2,7 +2,7 @@
 
 import { AppLayout } from '@/components/layout'
 import { StatsCard } from '@/components/dashboard'
-import { EnhancedBitcoinChart, RainbowChart, MetricGauge, NUPLDetail, SOPRDetail, DominanceDetail, VisualNUPLChart, VisualRainbowChart, VisualSOPRChart, VisualMVRVChart, ComprehensiveMetrics, BTCDominanceChart, SaylorTracker, ETFFlowsChart } from '@/components/charts'
+import { EnhancedBitcoinChart, RainbowChart, MetricGauge, NUPLDetail, SOPRDetail, DominanceDetail, VisualNUPLChart, VisualRainbowChart, VisualSOPRChart, VisualMVRVChart, ComprehensiveMetrics, BTCDominanceChart, ETFFlowsChart } from '@/components/charts'
 import { TopAppsRankings } from '@/components/rankings'
 import { ActionSignalComponent } from '@/components/metrics'
 import { Card, CardContent, CardHeader, CardTitle, DataStatus } from '@/components/ui'
@@ -10,7 +10,7 @@ import { DashboardMetric } from '@/lib/types'
 import { getSignalStyle } from '@/lib/constants/signals'
 import { CurrencyBtc, TrendUp, ChartLine, Ranking, Warning, Clock, CircleNotch, Trophy, Target, Gauge } from '@phosphor-icons/react'
 import { motion } from 'framer-motion'
-import { useBitcoinData, useAppRankings, useTopApps, useSaylorTracker, useMicroStrategy, useETFFlows } from '@/hooks'
+import { useBitcoinData, useAppRankings, useTopApps, useMicroStrategy, useETFFlows } from '@/hooks'
 import { getAverageRanking } from '@/lib/api/real-app-store'
 import { predictCycleTiming, getCycleHealthScore } from '@/lib/analysis/cycle-predictor'
 import { 
@@ -31,7 +31,6 @@ export function LiveDashboard() {
   const bitcoinData = bitcoinResponse?.data
   const { data: rankingsData, isLoading: rankingsLoading, error: rankingsError } = useAppRankings()
   const { data: topAppsData, isLoading: topAppsLoading, error: topAppsError } = useTopApps()
-  const { data: saylorData, isLoading: saylorLoading, error: saylorError } = useSaylorTracker()
   const { data: microStrategyData, isLoading: microStrategyLoading, error: microStrategyError } = useMicroStrategy()
   const { data: etfFlowsData, isLoading: etfFlowsLoading, error: etfFlowsError } = useETFFlows()
 
